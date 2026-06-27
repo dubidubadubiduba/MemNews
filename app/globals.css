@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+:root {
+  --samsung-blue: #1428A0;
+  --samsung-navy: #0A1931;
+  --samsung-sky: #03C5FF;
+  --samsung-gray: #F4F4F4;
+}
+
+body {
+  background: #F4F4F4;
+  font-family: 'Noto Sans KR', Arial, sans-serif;
+}

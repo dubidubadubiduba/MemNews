@@ -1,0 +1,18 @@
+# A3 Pulse (Apple)
+https://9to5mac.com/feed/
+https://feeds.macrumors.com/MacRumors-All
+https://www.theverge.com/rss/index.xml
+
+# Mobile Radar
+https://www.engadget.com/rss.xml
+https://www.theverge.com/rss/index.xml
+https://techcrunch.com/feed/
+
+# DRAM Brief
+https://www.tomshardware.com/feeds/all
+http://feeds.arstechnica.com/arstechnica/index.rss
+
+# Big Tech
+https://techcrunch.com/feed/
+https://www.theverge.com/rss/index.xml
+http://feeds.arstechnica.com/arstechnica/index.rss
