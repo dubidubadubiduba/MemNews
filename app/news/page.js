@@ -17,9 +17,16 @@ function ArticleCard({ article }) {
       rel="noopener noreferrer"
       className="block group border-b border-gray-100 last:border-0 py-3 hover:bg-blue-50 px-2 -mx-2 rounded transition-colors"
     >
-      <p className="text-[#1428A0] font-semibold text-sm leading-snug group-hover:underline">
-        {article.title_ko || article.title}
-      </p>
+      <div className="flex items-start gap-2">
+        {article.matchedKeyword && (
+          <span className="flex-shrink-0 mt-0.5 bg-[#1428A0] text-white text-[11px] px-2.5 py-0.5 rounded-full font-bold tracking-wide">
+            {article.matchedKeyword}
+          </span>
+        )}
+        <p className="text-[#1428A0] font-semibold text-sm leading-snug group-hover:underline">
+          {article.title_ko || article.title}
+        </p>
+      </div>
       <p className="text-gray-500 text-xs mt-1 leading-relaxed line-clamp-3">
         {article.summary_ko}
       </p>
