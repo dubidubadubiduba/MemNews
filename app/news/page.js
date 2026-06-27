@@ -37,7 +37,7 @@ function ArticleCard({ article }) {
 
 function SectionCard({ sectionName, sectionData, articles, sectionIndex }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[420px]">
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[500px]">
       <div className="px-4 py-2.5 flex-shrink-0" style={{ backgroundColor: sectionData.color }}>
         <span className="text-white font-bold text-xs tracking-wide uppercase">
           Section {sectionIndex + 1} — {sectionName}
