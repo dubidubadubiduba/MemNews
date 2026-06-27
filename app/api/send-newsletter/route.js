@@ -1,12 +1,26 @@
 import { NextResponse } from 'next/server'
-import * as Brevo from '@getbrevo/brevo'
 import { getAllUsers } from '@/lib/users'
 import { fetchNewsForKeywords, groupBySection } from '@/lib/rss'
 import { translateArticles } from '@/lib/translate'
 import { buildEmailHtml } from '@/lib/email-template'
 
-const brevo = new Brevo.TransactionalEmailsApi()
-brevo.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY)
+async function sendEmail(to, subject, html) {
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'api-key': process.env.BREVO_API_KEY,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      sender: { name: 'MemNews', email: 'gipunbam@gmail.com' },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+    }),
+  })
+  if (!res.ok) throw new Error(await res.text())
+}
 
 export async function POST(request) {
   const authHeader = request.headers.get('authorization')
@@ -38,13 +52,7 @@ export async function POST(request) {
       }
 
       const html = buildEmailHtml(translatedGrouped, today)
-
-      await brevo.sendTransacEmail({
-        sender: { name: 'MemNews', email: 'gipunbam@gmail.com' },
-        to: [{ email: user.email }],
-        subject: `[MemNews] ${today} 오늘의 MemNews`,
-        htmlContent: html,
-      })
+      await sendEmail(user.email, `[MemNews] ${today} 오늘의 MemNews`, html)
 
       results.push({ email: user.email, status: 'sent' })
     } catch (err) {

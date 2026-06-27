@@ -129,8 +129,8 @@
   "hotPaths": [
     {
       "path": "app\\api\\send-newsletter\\route.js",
-      "accessCount": 3,
-      "lastAccessed": 1782570484498,
+      "accessCount": 5,
+      "lastAccessed": 1782571648985,
       "type": "file"
     },
     {
