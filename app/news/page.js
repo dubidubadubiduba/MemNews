@@ -36,6 +36,8 @@ function ArticleCard({ article }) {
 }
 
 function AnalysisCard({ analysis, sectionIndex }) {
+  const chains = analysis?.chains || []
+
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[400px]">
       <div className="px-4 py-2.5 flex-shrink-0 flex items-center gap-2" style={{ backgroundColor: '#0A1931' }}>
@@ -44,8 +46,36 @@ function AnalysisCard({ analysis, sectionIndex }) {
           Section {sectionIndex + 1} — SEC Mem. 영향 분석
         </span>
       </div>
-      <div className="px-4 py-3 overflow-y-auto flex-1">
-        <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{analysis}</p>
+      <div className="px-4 py-3 overflow-y-auto flex-1 flex flex-col justify-around gap-2">
+        {chains.length > 0 ? chains.map((chain, i) => (
+          <div key={i} className="flex items-center gap-2">
+            {/* 원인 박스 */}
+            <div
+              className="flex-1 rounded-lg px-3 py-2 text-xs font-medium text-center leading-snug"
+              style={chain.positive
+                ? { backgroundColor: '#DCFCE7', color: '#15803D', border: '1px solid #86EFAC' }
+                : { backgroundColor: '#FEF3C7', color: '#B45309', border: '1px solid #FCD34D' }}
+            >
+              {chain.trigger}
+            </div>
+            {/* 화살표 */}
+            <div className="flex-shrink-0 flex flex-col items-center gap-0.5">
+              <span className="text-gray-400 text-sm font-bold">→</span>
+              <span className="text-[10px]">{chain.positive ? '📈' : '⚠️'}</span>
+            </div>
+            {/* 영향 박스 */}
+            <div
+              className="flex-1 rounded-lg px-3 py-2 text-xs font-semibold text-center leading-snug"
+              style={chain.positive
+                ? { backgroundColor: '#166534', color: '#FFFFFF' }
+                : { backgroundColor: '#92400E', color: '#FFFFFF' }}
+            >
+              {chain.impact}
+            </div>
+          </div>
+        )) : (
+          <p className="text-gray-300 text-xs text-center py-8">분석 중...</p>
+        )}
       </div>
     </div>
   )
