@@ -37,13 +37,13 @@ function ArticleCard({ article }) {
 
 function SectionCard({ sectionName, sectionData, articles, sectionIndex }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col">
-      <div className="px-4 py-2.5" style={{ backgroundColor: sectionData.color }}>
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[420px]">
+      <div className="px-4 py-2.5 flex-shrink-0" style={{ backgroundColor: sectionData.color }}>
         <span className="text-white font-bold text-xs tracking-wide uppercase">
           Section {sectionIndex + 1} — {sectionName}
         </span>
       </div>
-      <div className="px-4 py-2 overflow-y-auto max-h-[560px]">
+      <div className="px-4 py-2 overflow-y-auto flex-1">
         {articles && articles.length > 0 ? (
           articles.map((a, i) => <ArticleCard key={i} article={a} />)
         ) : (
