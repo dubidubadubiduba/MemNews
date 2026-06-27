@@ -52,9 +52,7 @@ function AnalysisCard({ analysis, sectionIndex }) {
             {/* 원인 박스 */}
             <div
               className="flex-1 rounded-lg px-3 py-1.5 text-xs font-medium text-center leading-snug"
-              style={chain.positive
-                ? { backgroundColor: '#DCFCE7', color: '#15803D', border: '1px solid #86EFAC' }
-                : { backgroundColor: '#FEF3C7', color: '#B45309', border: '1px solid #FCD34D' }}
+              style={{ backgroundColor: '#EEF1FF', color: '#1428A0', border: '1px solid #C7CFEE' }}
             >
               {chain.trigger}
             </div>
@@ -67,8 +65,8 @@ function AnalysisCard({ analysis, sectionIndex }) {
             <div
               className="flex-1 rounded-lg px-3 py-1.5 text-xs font-semibold text-center leading-snug"
               style={chain.positive
-                ? { backgroundColor: '#166534', color: '#FFFFFF' }
-                : { backgroundColor: '#92400E', color: '#FFFFFF' }}
+                ? { backgroundColor: '#1428A0', color: '#FFFFFF' }
+                : { backgroundColor: '#0A1931', color: '#FFFFFF' }}
             >
               {chain.impact}
             </div>
