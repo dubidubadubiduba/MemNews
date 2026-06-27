@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getUser } from '@/lib/users'
 import { fetchNewsForKeywords, groupBySection } from '@/lib/rss'
-import { translateArticles } from '@/lib/translate'
+import { translateArticles, generateSecAnalysis } from '@/lib/translate'
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
@@ -30,5 +30,7 @@ export async function GET(request) {
     idx += count
   }
 
-  return NextResponse.json({ sections: translatedGrouped, updatedAt: new Date().toISOString() })
+  const analysis = await generateSecAnalysis(translated)
+
+  return NextResponse.json({ sections: translatedGrouped, analysis, updatedAt: new Date().toISOString() })
 }

@@ -56,6 +56,7 @@ function SectionCard({ sectionName, sectionData, articles, sectionIndex }) {
 
 export default function NewsPage() {
   const [sections, setSections] = useState(null)
+  const [analysis, setAnalysis] = useState('')
   const [updatedAt, setUpdatedAt] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -70,6 +71,7 @@ export default function NewsPage() {
       if (!res.ok) throw new Error('failed')
       const data = await res.json()
       setSections(data.sections)
+      setAnalysis(data.analysis || '')
       setUpdatedAt(data.updatedAt)
     } catch {
       setError('뉴스를 불러오지 못했습니다. 새로고침을 눌러주세요.')
@@ -127,16 +129,31 @@ export default function NewsPage() {
         )}
 
         {sections && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sectionEntries.map(([name, data], idx) => (
-              <SectionCard
-                key={name}
-                sectionName={name}
-                sectionData={data}
-                articles={sections[name] || []}
-                sectionIndex={idx}
-              />
-            ))}
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {sectionEntries.map(([name, data], idx) => (
+                <SectionCard
+                  key={name}
+                  sectionName={name}
+                  sectionData={data}
+                  articles={sections[name] || []}
+                  sectionIndex={idx}
+                />
+              ))}
+            </div>
+
+            {analysis && (
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="px-4 py-2.5 flex-shrink-0" style={{ backgroundColor: '#0F4C2A' }}>
+                  <span className="text-white font-bold text-xs tracking-wide uppercase">
+                    Section {sectionEntries.length + 1} — SEC Mem. 영향 분석
+                  </span>
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{analysis}</p>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
