@@ -6,7 +6,7 @@ export async function GET(request) {
   const email = searchParams.get('email')
   if (!email) return NextResponse.json({ error: 'email required' }, { status: 400 })
 
-  const user = getUser(email)
+  const user = await getUser(email)
   return NextResponse.json({ user })
 }
 
@@ -18,6 +18,6 @@ export async function POST(request) {
     return NextResponse.json({ error: 'email and keywords required' }, { status: 400 })
   }
 
-  saveUser(email, keywords)
+  await saveUser(email, keywords)
   return NextResponse.json({ ok: true })
 }

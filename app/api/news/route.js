@@ -9,7 +9,7 @@ export async function GET(request) {
 
   if (!email) return NextResponse.json({ error: 'email required' }, { status: 400 })
 
-  const user = getUser(email)
+  const user = await getUser(email)
   if (!user) return NextResponse.json({ error: 'user not found' }, { status: 404 })
 
   const selectedKeywords = user.keywords || []

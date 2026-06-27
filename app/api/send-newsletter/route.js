@@ -28,7 +28,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const users = getAllUsers()
+  const users = await getAllUsers()
   const today = new Date().toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })
     .replace('. ', '/').replace('.', '')
 
