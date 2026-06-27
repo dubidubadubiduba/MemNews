@@ -46,12 +46,12 @@ function AnalysisCard({ analysis, sectionIndex }) {
           Section {sectionIndex + 1} — SEC Mem. 영향 분석
         </span>
       </div>
-      <div className="px-4 py-3 overflow-y-auto flex-1 flex flex-col justify-around gap-2">
+      <div className="px-4 py-2 overflow-y-auto flex-1 flex flex-col justify-around gap-1">
         {chains.length > 0 ? chains.map((chain, i) => (
           <div key={i} className="flex items-center gap-2">
             {/* 원인 박스 */}
             <div
-              className="flex-1 rounded-lg px-3 py-2 text-xs font-medium text-center leading-snug"
+              className="flex-1 rounded-lg px-3 py-1.5 text-xs font-medium text-center leading-snug"
               style={chain.positive
                 ? { backgroundColor: '#DCFCE7', color: '#15803D', border: '1px solid #86EFAC' }
                 : { backgroundColor: '#FEF3C7', color: '#B45309', border: '1px solid #FCD34D' }}
@@ -65,7 +65,7 @@ function AnalysisCard({ analysis, sectionIndex }) {
             </div>
             {/* 영향 박스 */}
             <div
-              className="flex-1 rounded-lg px-3 py-2 text-xs font-semibold text-center leading-snug"
+              className="flex-1 rounded-lg px-3 py-1.5 text-xs font-semibold text-center leading-snug"
               style={chain.positive
                 ? { backgroundColor: '#166534', color: '#FFFFFF' }
                 : { backgroundColor: '#92400E', color: '#FFFFFF' }}
