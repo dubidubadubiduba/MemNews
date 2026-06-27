@@ -43,7 +43,7 @@ function SectionCard({ sectionName, sectionData, articles, sectionIndex }) {
           Section {sectionIndex + 1} — {sectionName}
         </span>
       </div>
-      <div className="px-4 py-2 flex-1">
+      <div className="px-4 py-2 overflow-y-auto max-h-[280px]">
         {articles && articles.length > 0 ? (
           articles.map((a, i) => <ArticleCard key={i} article={a} />)
         ) : (
