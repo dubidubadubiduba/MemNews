@@ -35,6 +35,21 @@ function ArticleCard({ article }) {
   )
 }
 
+function AnalysisCard({ analysis, sectionIndex }) {
+  return (
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[500px]">
+      <div className="px-4 py-2.5 flex-shrink-0" style={{ backgroundColor: '#0A1931' }}>
+        <span className="text-white font-bold text-xs tracking-wide uppercase">
+          Section {sectionIndex + 1} — SEC Mem. 영향 분석
+        </span>
+      </div>
+      <div className="px-4 py-3 overflow-y-auto flex-1">
+        <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{analysis}</p>
+      </div>
+    </div>
+  )
+}
+
 function SectionCard({ sectionName, sectionData, articles, sectionIndex }) {
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[500px]">
@@ -129,30 +144,18 @@ export default function NewsPage() {
         )}
 
         {sections && (
-          <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {sectionEntries.map(([name, data], idx) => (
-                <SectionCard
-                  key={name}
-                  sectionName={name}
-                  sectionData={data}
-                  articles={sections[name] || []}
-                  sectionIndex={idx}
-                />
-              ))}
-            </div>
-
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {sectionEntries.map(([name, data], idx) => (
+              <SectionCard
+                key={name}
+                sectionName={name}
+                sectionData={data}
+                articles={sections[name] || []}
+                sectionIndex={idx}
+              />
+            ))}
             {analysis && (
-              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                <div className="px-4 py-2.5 flex-shrink-0" style={{ backgroundColor: '#0F4C2A' }}>
-                  <span className="text-white font-bold text-xs tracking-wide uppercase">
-                    Section {sectionEntries.length + 1} — SEC Mem. 영향 분석
-                  </span>
-                </div>
-                <div className="px-5 py-4">
-                  <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{analysis}</p>
-                </div>
-              </div>
+              <AnalysisCard analysis={analysis} sectionIndex={sectionEntries.length} />
             )}
           </div>
         )}
