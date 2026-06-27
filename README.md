@@ -33,9 +33,9 @@ GitHub: https://github.com/dubidubadubiduba/MemNews
 | 섹션 | 이름 | 상위 키워드 수 | 비고 |
 |------|------|---------------|------|
 | Section 1 | 제품 | 2 (DRAM, NAND) | 키워드당 최대 3개 |
-| Section 2 | 응용 | 9 (Mobile, SVR, HBM 등) | 키워드당 최대 2개 |
-| Section 3 | 고객 | 25 (Apple, NVIDIA 등) | 키워드당 최대 2개 |
-| Section 4 | 산업 | 10 (Big Tech, Foundry 등) | 키워드당 최대 2개 |
+| Section 2 | 응용 | 9 (Mobile, SVR, HBM, Consumer, Auto, eStorage, SSD, PC, Graphic) | 키워드당 최대 2개 |
+| Section 3 | 고객 | 25 (Apple, NVIDIA, AMD, Tesla, Hyundai 등) | 키워드당 최대 2개 |
+| Section 4 | 산업 | 10 (Big Tech, AI·데이터센터, Foundry, 메모리 시황 등) | 키워드당 최대 2개 |
 | Section 5 | Ref. | 9 (SK Hynix, Micron 등) | 경쟁사 모니터링 |
 | Section 6 | SEC Mem. 영향 분석 | — | 전체 뉴스 기반 자동 분석 |
 
@@ -154,7 +154,7 @@ app/
     news/route.js            # 뉴스 조회 + 번역 + 영향 분석 API
     send-newsletter/route.js # 이메일 발송 API (Cron 호출)
 lib/
-  keywords.js                # 상위 46개 키워드 + 하위 검색 쿼리 + RSS 소스 정의
+  keywords.js                # 상위 55개 키워드 + 하위 검색 쿼리 + RSS 소스 정의
   rss.js                     # RSS 수집, 파싱, 우선순위 기반 그루핑
   translate.js               # Claude Haiku 번역 + SEC Mem. 영향 분석
   email-template.js          # 이메일 HTML 템플릿
