@@ -39,7 +39,7 @@ export default function RegisterPage() {
           MemNews
         </h1>
         <p className="text-center text-gray-500 text-xs mb-8 leading-relaxed">
-          이메일을 등록하면 매일 아침 7시에<br />맞춤 뉴스레터를 받을 수 있어요.
+          이메일을 등록하면 매일 아침 6시에<br />맞춤 뉴스레터를 받을 수 있어요.
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
