@@ -9,29 +9,64 @@ function formatTime(iso) {
   return d.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
 }
 
+function getDomain(url) {
+  try { return new URL(url).hostname } catch { return '' }
+}
+
 function ArticleCard({ article }) {
+  const domain = getDomain(article.link)
+  const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=16` : null
+  const translateUrl = article.link
+    ? `https://translate.google.com/translate?sl=auto&tl=ko&u=${encodeURIComponent(article.link)}`
+    : '#'
+
   return (
-    <a
-      href={article.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block group border-b border-gray-100 last:border-0 py-3 hover:bg-blue-50 px-2 -mx-2 rounded transition-colors"
-    >
+    <div className="border-b border-gray-100 last:border-0 py-3">
       <div className="flex items-start gap-2">
         {article.matchedKeyword && (
           <span className="flex-shrink-0 mt-0.5 bg-[#1428A0] text-white text-[11px] px-2.5 py-0.5 rounded-full font-bold tracking-wide">
             {article.matchedKeyword}
           </span>
         )}
-        <p className="text-[#1428A0] font-semibold text-sm leading-snug group-hover:underline">
+        <a
+          href={article.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#1428A0] font-semibold text-sm leading-snug hover:underline"
+        >
           {article.title_ko || article.title}
-        </p>
+        </a>
       </div>
       <p className="text-gray-500 text-xs mt-1 leading-relaxed line-clamp-3">
         {article.summary_ko}
       </p>
-      <span className="text-gray-300 text-xs mt-1 block">{article.source}</span>
-    </a>
+      <div className="flex items-center justify-between mt-1.5">
+        <div className="flex items-center gap-1">
+          {faviconUrl && (
+            <img src={faviconUrl} alt="" className="w-3 h-3 flex-shrink-0" onError={e => { e.target.style.display = 'none' }} />
+          )}
+          <span className="text-gray-300 text-[11px]">{article.source}</span>
+        </div>
+        <div className="flex gap-1.5">
+          <a
+            href={translateUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-[#1428A0] border border-[#C7CFEE] bg-[#EEF1FF] rounded px-1.5 py-0.5 hover:bg-[#dce3ff] transition-colors"
+          >
+            번역 보기
+          </a>
+          <a
+            href={article.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-gray-400 border border-gray-200 rounded px-1.5 py-0.5 hover:bg-gray-50 transition-colors"
+          >
+            원문 보기
+          </a>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -40,28 +75,25 @@ function AnalysisCard({ analysis, sectionIndex }) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[350px]">
-      <div className="px-4 py-2.5 flex-shrink-0 flex items-center gap-2" style={{ backgroundColor: '#0A1931' }}>
+      <div className="px-4 py-2.5 flex-shrink-0 flex items-center gap-2" style={{ backgroundColor: '#475569' }}>
         <span style={{ color: '#FBBF24', fontSize: '14px', lineHeight: 1 }}>★</span>
         <span className="text-white font-bold text-xs tracking-wide uppercase">
-          Section {sectionIndex + 1} — SEC Mem. 영향 분석
+          Section {sectionIndex + 1} — 당사 Mem. 영향 분석
         </span>
       </div>
       <div className="px-4 py-2 overflow-y-auto flex-1 flex flex-col justify-around gap-1">
         {chains.length > 0 ? chains.map((chain, i) => (
           <div key={i} className="flex items-center gap-2">
-            {/* 원인 박스 */}
             <div
               className="flex-1 rounded-lg px-3 py-1.5 text-xs font-medium text-center leading-snug"
               style={{ backgroundColor: '#EEF1FF', color: '#1428A0', border: '1px solid #C7CFEE', wordBreak: 'keep-all' }}
             >
               {chain.trigger}
             </div>
-            {/* 화살표 */}
             <div className="flex-shrink-0 flex flex-col items-center gap-0.5">
               <span className="text-gray-400 text-sm font-bold">→</span>
               <span className="text-[10px]">{chain.positive ? '📈' : '⚠️'}</span>
             </div>
-            {/* 영향 박스 */}
             <div
               className="flex-1 rounded-lg px-3 py-1.5 text-xs font-semibold text-center leading-snug"
               style={chain.positive
@@ -135,9 +167,8 @@ export default function NewsPage() {
 
   return (
     <main className="min-h-screen bg-[#F4F4F4]">
-      {/* Header */}
       <div className="bg-[#1428A0] px-6 py-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white tracking-widest">MemNews</h1>
+        <h1 className="text-2xl font-bold text-white tracking-widest">ChipBird</h1>
         <div className="flex items-center gap-3">
           {updatedAt && (
             <span className="text-[#a0b4e8] text-xs">업데이트 {formatTime(updatedAt)}</span>

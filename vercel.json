@@ -4,5 +4,13 @@
       "path": "/api/send-newsletter",
       "schedule": "0 21 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "app/api/send-newsletter/route.js": {
+      "maxDuration": 60
+    },
+    "app/api/news/route.js": {
+      "maxDuration": 60
+    }
+  }
 }

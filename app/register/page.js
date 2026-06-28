@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
+  const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -12,6 +13,10 @@ export default function RegisterPage() {
     e.preventDefault()
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError('올바른 이메일 형식이 아닙니다.')
+      return
+    }
+    if (!agreed) {
+      setError('개인정보 수집·이용에 동의해주세요.')
       return
     }
 
@@ -36,7 +41,7 @@ export default function RegisterPage() {
     <main className="min-h-screen bg-[#1428A0] flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-2xl p-10 w-full max-w-sm">
         <h1 className="text-4xl font-bold text-[#1428A0] text-center tracking-widest mb-1">
-          MemNews
+          ChipBird
         </h1>
         <p className="text-center text-gray-500 text-xs mb-8 leading-relaxed">
           이메일을 등록하면 매일 아침 6시에<br />맞춤 뉴스레터를 받을 수 있어요.
@@ -51,6 +56,20 @@ export default function RegisterPage() {
             autoFocus
             className="border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#1428A0] focus:ring-1 focus:ring-[#1428A0] transition"
           />
+
+          <label className="flex items-start gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={e => { setAgreed(e.target.checked); setError('') }}
+              className="mt-0.5 accent-[#1428A0]"
+            />
+            <span className="text-[11px] text-gray-500 leading-relaxed">
+              이메일 주소는 뉴스레터 발송 목적으로만 사용되며, 개인정보 보호법에 따라 안전하게 보호됩니다.{' '}
+              <span className="text-red-400 font-medium">(필수)</span>
+            </span>
+          </label>
+
           {error && (
             <p className="text-red-500 text-xs text-center">{error}</p>
           )}

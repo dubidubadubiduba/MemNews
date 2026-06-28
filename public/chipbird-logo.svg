@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 100" width="320" height="100">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- IC Chip body (= bird body) -->
+  <rect x="14" y="33" width="60" height="44" rx="8" fill="#1428A0"/>
+
+  <!-- Left pins -->
+  <rect x="2"  y="40" width="12" height="5" rx="2.5" fill="#1428A0"/>
+  <rect x="2"  y="50" width="12" height="5" rx="2.5" fill="#1428A0"/>
+  <rect x="2"  y="60" width="12" height="5" rx="2.5" fill="#1428A0"/>
+
+  <!-- Right pins -->
+  <rect x="74" y="40" width="12" height="5" rx="2.5" fill="#1428A0"/>
+  <rect x="74" y="50" width="12" height="5" rx="2.5" fill="#1428A0"/>
+  <rect x="74" y="60" width="12" height="5" rx="2.5" fill="#1428A0"/>
+
+  <!-- Circuit traces on chip (subtle) -->
+  <line x1="28" y1="48" x2="60" y2="48" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+  <line x1="44" y1="48" x2="44" y2="62" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+  <line x1="28" y1="62" x2="60" y2="62" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+  <circle cx="28" cy="48" r="2.2" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="60" cy="48" r="2.2" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="44" cy="62" r="2.2" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="28" cy="62" r="2.2" fill="rgba(255,255,255,0.3)"/>
+
+  <!-- Bird head (pokes out of top-right of chip) -->
+  <circle cx="62" cy="23" r="16" fill="#1428A0"/>
+
+  <!-- Beak -->
+  <polygon points="78,20 92,23 78,26" fill="#FBBF24"/>
+
+  <!-- Eye white -->
+  <circle cx="68" cy="20" r="5.5" fill="white"/>
+  <!-- Pupil -->
+  <circle cx="69.5" cy="20" r="2.8" fill="#0A1931"/>
+  <!-- Eye shine -->
+  <circle cx="68" cy="18.2" r="1.1" fill="white"/>
+
+  <!-- Tail (navy, left side) -->
+  <path d="M14,60 Q0,54 -4,42 Q4,50 8,43 Q10,54 14,60Z" fill="#0A1931"/>
+
+  <!-- Wordmark -->
+  <text x="108" y="53"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-weight="800"
+    font-size="31"
+    letter-spacing="-0.8"
+    fill="#1428A0">ChipBird</text>
+
+  <!-- Tagline -->
+  <text x="110" y="71"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="9.5"
+    letter-spacing="2.8"
+    fill="#888">SEMICONDUCTOR EARLY BIRD</text>
+</svg>

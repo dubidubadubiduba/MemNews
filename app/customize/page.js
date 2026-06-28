@@ -54,7 +54,7 @@ export default function CustomizePage() {
   return (
     <main className="min-h-screen bg-[#F4F4F4] pb-24">
       <div className="bg-[#1428A0] px-6 py-5 text-center">
-        <h1 className="text-2xl font-bold text-white tracking-widest">MemNews</h1>
+        <h1 className="text-2xl font-bold text-white tracking-widest">ChipBird</h1>
         <p className="text-[#a0b4e8] text-xs mt-1">관심 키워드를 선택하세요 (최대 {MAX_KW}개)</p>
       </div>
 
@@ -99,9 +99,12 @@ export default function CustomizePage() {
 
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
-          <span className={`text-sm font-medium ${atLimit ? 'text-[#1428A0]' : 'text-gray-500'}`}>
-            {selected.length > 0 ? `${selected.length} / ${MAX_KW}개 선택됨${atLimit ? ' (최대)' : ''}` : '키워드를 선택해주세요'}
-          </span>
+          <div className="flex flex-col gap-0.5">
+            <span className={`text-sm font-medium ${atLimit ? 'text-[#1428A0]' : 'text-gray-500'}`}>
+              {selected.length > 0 ? `${selected.length} / ${MAX_KW}개 선택됨${atLimit ? ' (최대)' : ''}` : '키워드를 선택해주세요'}
+            </span>
+            <span className="text-[11px] text-gray-300">여러 섹션에 걸친 키워드는 1개로 카운트</span>
+          </div>
           <button
             onClick={handleSave}
             disabled={selected.length === 0 || saving}

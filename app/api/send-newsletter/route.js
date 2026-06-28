@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAllUsers } from '@/lib/users'
 import { fetchNewsForKeywords, groupBySection } from '@/lib/rss'
-import { translateArticles } from '@/lib/translate'
+import { translateArticles, generateSecAnalysis } from '@/lib/translate'
 import { buildEmailHtml } from '@/lib/email-template'
 
 async function sendEmail(to, subject, html) {
@@ -13,7 +13,7 @@ async function sendEmail(to, subject, html) {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      sender: { name: 'MemNews', email: 'gipunbam@gmail.com' },
+      sender: { name: 'ChipBird', email: 'gipunbam@gmail.com' },
       to: [{ email: to }],
       subject,
       htmlContent: html,
@@ -51,8 +51,9 @@ export async function POST(request) {
         idx += count
       }
 
-      const html = buildEmailHtml(translatedGrouped, today)
-      await sendEmail(user.email, `[MemNews] ${today} 오늘의 MemNews`, html)
+      const analysis = await generateSecAnalysis(translated)
+      const html = buildEmailHtml(translatedGrouped, today, analysis)
+      await sendEmail(user.email, `[ChipBird] ${today} 오늘의 ChipBird`, html)
 
       results.push({ email: user.email, status: 'sent' })
     } catch (err) {
