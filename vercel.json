@@ -11,6 +11,9 @@
     },
     "app/api/news/route.js": {
       "maxDuration": 60
+    },
+    "app/api/translate-article/route.js": {
+      "maxDuration": 60
     }
   }
 }

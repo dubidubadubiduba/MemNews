@@ -14,11 +14,28 @@ function getDomain(url) {
 }
 
 function ArticleCard({ article }) {
+  const [showTranslation, setShowTranslation] = useState(false)
+  const [translation, setTranslation] = useState(null)
+  const [translating, setTranslating] = useState(false)
+
   const domain = getDomain(article.link)
   const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=16` : null
-  const translateUrl = article.link
-    ? `https://translate.google.com/translate?sl=auto&tl=ko&u=${encodeURIComponent(article.link)}`
-    : '#'
+
+  async function handleTranslate() {
+    if (showTranslation) { setShowTranslation(false); return }
+    setShowTranslation(true)
+    if (translation) return
+    setTranslating(true)
+    try {
+      const res = await fetch(`/api/translate-article?url=${encodeURIComponent(article.link)}`)
+      const data = await res.json()
+      setTranslation(data.translated || data.error || '번역 실패')
+    } catch {
+      setTranslation('번역 중 오류가 발생했습니다.')
+    } finally {
+      setTranslating(false)
+    }
+  }
 
   return (
     <div className="border-b border-gray-100 last:border-0 py-3">
@@ -40,6 +57,18 @@ function ArticleCard({ article }) {
       <p className="text-gray-500 text-xs mt-1 leading-relaxed line-clamp-3">
         {article.summary_ko}
       </p>
+      {showTranslation && (
+        <div className="mt-2 bg-[#F8F9FF] border border-[#C7CFEE] rounded-lg p-3 text-xs text-gray-700 leading-relaxed">
+          {translating ? (
+            <div className="flex items-center gap-2 text-gray-400">
+              <div className="w-3 h-3 border-2 border-[#1428A0] border-t-transparent rounded-full animate-spin" />
+              번역 중...
+            </div>
+          ) : (
+            <p className="whitespace-pre-wrap">{translation}</p>
+          )}
+        </div>
+      )}
       <div className="flex items-center justify-between mt-1.5">
         <div className="flex items-center gap-1">
           {faviconUrl && (
@@ -48,14 +77,12 @@ function ArticleCard({ article }) {
           <span className="text-gray-300 text-[11px]">{article.source}</span>
         </div>
         <div className="flex gap-1.5">
-          <a
-            href={translateUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={handleTranslate}
             className="text-[10px] text-[#1428A0] border border-[#C7CFEE] bg-[#EEF1FF] rounded px-1.5 py-0.5 hover:bg-[#dce3ff] transition-colors"
           >
-            번역 보기
-          </a>
+            {showTranslation ? '번역 닫기' : '번역 보기'}
+          </button>
           <a
             href={article.link}
             target="_blank"
