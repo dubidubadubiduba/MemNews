@@ -81,16 +81,8 @@ function ArticleCard({ article }) {
             onClick={handleTranslate}
             className="text-[10px] text-[#1428A0] border border-[#C7CFEE] bg-[#EEF1FF] rounded px-1.5 py-0.5 hover:bg-[#dce3ff] transition-colors"
           >
-            {showTranslation ? '번역 닫기' : '번역 보기'}
+            {showTranslation ? '번역 닫기' : '번역 전문'}
           </button>
-          <a
-            href={article.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] text-gray-400 border border-gray-200 rounded px-1.5 py-0.5 hover:bg-gray-50 transition-colors"
-          >
-            원문 보기
-          </a>
         </div>
       </div>
     </div>
@@ -195,7 +187,7 @@ export default function NewsPage() {
   return (
     <main className="min-h-screen bg-[#F4F4F4]">
       <div className="bg-[#1428A0] px-6 py-4 flex items-center justify-between">
-        <img src="/chipbird-logo-navy.png" alt="ChipBird" className="h-8" style={{filter: 'brightness(0) invert(1)'}} />
+        <img src="/chipbird-logo-fixed.png" alt="ChipBird" className="h-8" />
         <div className="flex items-center gap-3">
           {updatedAt && (
             <span className="text-[#a0b4e8] text-xs">업데이트 {formatTime(updatedAt)}</span>
