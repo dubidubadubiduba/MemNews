@@ -75,9 +75,9 @@ function AnalysisCard({ analysis, sectionIndex }) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[350px]">
-      <div className="px-4 py-2.5 flex-shrink-0 flex items-center gap-2" style={{ backgroundColor: '#475569' }}>
-        <span style={{ color: '#FBBF24', fontSize: '14px', lineHeight: 1 }}>★</span>
-        <span className="text-white font-bold text-xs tracking-wide uppercase">
+      <div className="px-4 py-3 flex-shrink-0 flex items-center gap-2" style={{ backgroundColor: '#475569' }}>
+        <span style={{ color: '#FBBF24', fontSize: '18px', lineHeight: 1 }}>★</span>
+        <span className="text-white font-bold text-lg tracking-wide uppercase">
           Section {sectionIndex + 1} — 당사 Mem. 영향 분석
         </span>
       </div>
@@ -114,8 +114,8 @@ function AnalysisCard({ analysis, sectionIndex }) {
 function SectionCard({ sectionName, sectionData, articles, sectionIndex }) {
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[350px]">
-      <div className="px-4 py-2.5 flex-shrink-0" style={{ backgroundColor: sectionData.color }}>
-        <span className="text-white font-bold text-xs tracking-wide uppercase">
+      <div className="px-4 py-3 flex-shrink-0" style={{ backgroundColor: sectionData.color }}>
+        <span className="text-white font-bold text-lg tracking-wide uppercase">
           Section {sectionIndex + 1} — {sectionName}
         </span>
       </div>
