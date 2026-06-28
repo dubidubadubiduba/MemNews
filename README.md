@@ -6,7 +6,7 @@
 매일 아침 6시(KST), 최근 12시간 이내 영어권 뉴스를 한국어로 번역해 이메일로 발송.
 
 배포 URL: https://mem-news-pi3h.vercel.app  
-GitHub: https://github.com/dubidubadubiduba/Mem12h
+GitHub: https://github.com/dubidubadubiduba/MemNews
 
 ---
 
