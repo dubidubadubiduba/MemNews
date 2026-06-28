@@ -19,7 +19,7 @@ export default function PasswordPage() {
 
   return (
     <main className="min-h-screen bg-[#1428A0] flex flex-col items-center justify-center px-4 gap-6">
-      <img src="/chipbird-logo-white.png" alt="ChipBird" className="h-28" />
+      <img src="/chipbird-logo-navy.png" alt="ChipBird" className="h-28" style={{filter: 'brightness(0) invert(1)'}} />
       <div className="bg-white rounded-2xl shadow-2xl px-10 pt-6 pb-8 w-full max-w-md">
         <p className="text-center text-gray-400 text-xs mb-5 tracking-wide">
           반도체 · 메모리 뉴스레터

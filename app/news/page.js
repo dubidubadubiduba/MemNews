@@ -195,7 +195,7 @@ export default function NewsPage() {
   return (
     <main className="min-h-screen bg-[#F4F4F4]">
       <div className="bg-[#1428A0] px-6 py-4 flex items-center justify-between">
-        <img src="/chipbird-logo-white.png" alt="ChipBird" className="h-8" />
+        <img src="/chipbird-logo-navy.png" alt="ChipBird" className="h-8" style={{filter: 'brightness(0) invert(1)'}} />
         <div className="flex items-center gap-3">
           {updatedAt && (
             <span className="text-[#a0b4e8] text-xs">업데이트 {formatTime(updatedAt)}</span>
