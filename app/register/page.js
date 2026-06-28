@@ -39,8 +39,8 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-screen bg-[#1428A0] flex flex-col items-center justify-center px-4 gap-6">
-      <img src="/chipbird-logo-fixed.png" alt="ChipBird" className="h-24" />
-      <div className="bg-white rounded-2xl shadow-2xl px-10 pt-6 pb-8 w-full max-w-sm">
+      <img src="/chipbird-logo-fixed.png" alt="ChipBird" className="h-48" />
+      <div className="bg-white rounded-2xl shadow-2xl px-10 pt-6 pb-8 w-full max-w-md">
         <p className="text-center text-gray-500 text-xs mb-8 leading-relaxed">
           이메일을 등록하면 매일 아침 6시에<br />맞춤 뉴스레터를 받을 수 있어요.
         </p>
