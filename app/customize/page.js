@@ -54,7 +54,7 @@ export default function CustomizePage() {
   return (
     <main className="min-h-screen bg-[#F4F4F4] pb-24">
       <div className="bg-[#1428A0] px-6 py-5 text-center">
-        <h1 className="text-2xl font-bold text-white tracking-widest">ChipBird</h1>
+        <img src="/chipbird-logo-white.png" alt="ChipBird" className="h-8 mx-auto" />
         <p className="text-[#a0b4e8] text-xs mt-1">관심 키워드를 선택하세요 (최대 {MAX_KW}개)</p>
       </div>
 

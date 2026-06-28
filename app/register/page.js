@@ -38,11 +38,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#1428A0] flex items-center justify-center px-4">
+    <main className="min-h-screen bg-[#1428A0] flex flex-col items-center justify-center px-4 gap-5">
+      <img src="/chipbird-logo-white.png" alt="ChipBird" className="h-20" />
       <div className="bg-white rounded-2xl shadow-2xl p-10 w-full max-w-sm">
-        <h1 className="text-4xl font-bold text-[#1428A0] text-center tracking-widest mb-1">
-          ChipBird
-        </h1>
         <p className="text-center text-gray-500 text-xs mb-8 leading-relaxed">
           이메일을 등록하면 매일 아침 6시에<br />맞춤 뉴스레터를 받을 수 있어요.
         </p>
