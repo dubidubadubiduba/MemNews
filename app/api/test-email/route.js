@@ -2,11 +2,9 @@ import { NextResponse } from 'next/server'
 import { fetchNewsForKeywords, groupBySection } from '@/lib/rss'
 import { translateArticles, generateSecAnalysis } from '@/lib/translate'
 import { buildEmailHtml } from '@/lib/email-template'
-import { SECTIONS } from '@/lib/keywords'
+import { getUser } from '@/lib/users'
 
 export const maxDuration = 60
-
-const DEFAULT_KEYWORDS = Object.values(SECTIONS).flatMap(s => Object.keys(s.keywords || {}).slice(0, 3))
 
 async function sendEmail(to, subject, html) {
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -38,11 +36,16 @@ export async function GET(request) {
     return NextResponse.json({ error: 'to 파라미터 필요' }, { status: 400 })
   }
 
+  const user = await getUser(to)
+  if (!user) return NextResponse.json({ error: '등록된 유저 없음' }, { status: 404 })
+
+  const keywords = user.keywords || []
+
   const today = new Date().toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })
     .replace('. ', '/').replace('.', '')
 
-  const articles = await fetchNewsForKeywords(DEFAULT_KEYWORDS)
-  const grouped = groupBySection(articles, DEFAULT_KEYWORDS)
+  const articles = await fetchNewsForKeywords(keywords)
+  const grouped = groupBySection(articles, keywords)
 
   const sectionNames = Object.keys(grouped)
   const allArticles = sectionNames.flatMap(s => grouped[s])
@@ -58,7 +61,7 @@ export async function GET(request) {
 
   const analysis = await generateSecAnalysis(translated)
   const html = buildEmailHtml(translatedGrouped, today, analysis)
-  await sendEmail(to, `[ChipBird TEST] ${today} 테스트 이메일`, html)
+  await sendEmail(to, `[ChipBird] ${today} 오늘의 ChipBird`, html)
 
-  return NextResponse.json({ ok: true, to, sent: today })
+  return NextResponse.json({ ok: true, to, keywords: keywords.length, sent: today })
 }
