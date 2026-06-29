@@ -132,7 +132,7 @@ function AnalysisCard({ analysis }) {
 
 function SectionCard({ sectionName, sectionData, articles, sectionIndex }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[350px]">
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[450px]">
       <div className="px-4 py-3 flex-shrink-0" style={{ backgroundColor: sectionData.color }}>
         <span className="text-white font-bold text-lg tracking-wide uppercase">
           Section {sectionIndex + 1} — {sectionName}
