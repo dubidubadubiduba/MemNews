@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { kv } from '@vercel/kv'
 import { getAllUsers } from '@/lib/users'
 import { fetchNewsForKeywords, groupBySection } from '@/lib/rss'
 import { translateArticles, generateSecAnalysis } from '@/lib/translate'
@@ -31,13 +32,29 @@ async function handler(request) {
   const testTo = searchParams.get('to')     // 테스트 수신자(1명만)
   const isTest = testKey === 'send-test-9f3a' && !!testTo
 
-  // 인증: ① 테스트 모드 ② Vercel Cron(user-agent로 식별, CRON_SECRET 미설정이어도 동작)
-  //       ③ CRON_SECRET 일치(설정돼 있으면 더 안전)
+  // 인증: ① 테스트 모드 ② Vercel Cron(user-agent) ③ CRON_SECRET(헤더 또는 ?key=)
+  //  → 외부 정밀 스케줄러(cron-job.org 등)는 ?key=<CRON_SECRET> 로 호출
+  const keyParam = searchParams.get('key')
   const isVercelCron = userAgent.toLowerCase().includes('vercel-cron')
-  const hasSecret = !!process.env.CRON_SECRET && authHeader === `Bearer ${process.env.CRON_SECRET}`
+  const hasSecret = !!process.env.CRON_SECRET &&
+    (authHeader === `Bearer ${process.env.CRON_SECRET}` || keyParam === process.env.CRON_SECRET)
 
   if (!isTest && !isVercelCron && !hasSecret) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  }
+
+  // 일요일(KST)은 발송 안 함 + 하루 1회만 발송(중복 방지)
+  if (!isTest) {
+    const kstWeekday = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Seoul', weekday: 'short' })
+    if (kstWeekday === 'Sun') {
+      return NextResponse.json({ skipped: true, reason: '일요일은 발송하지 않음' })
+    }
+    const kstDate = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })
+    const lock = await kv.set(`newsletter-sent:${kstDate}`, Date.now(), { nx: true, ex: 23 * 3600 })
+      .catch(() => 'OK')
+    if (lock === null) {
+      return NextResponse.json({ skipped: true, reason: '오늘 이미 발송됨', date: kstDate })
+    }
   }
 
   // 테스트 모드: 전 구독자 대신 지정한 1명에게만, 전체 키워드로 발송

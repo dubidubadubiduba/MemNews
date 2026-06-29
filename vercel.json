@@ -2,11 +2,7 @@
   "crons": [
     {
       "path": "/api/send-newsletter",
-      "schedule": "0 21 * * *"
-    },
-    {
-      "path": "/api/send-newsletter?test=send-test-9f3a&to=alwayshp2gth@naver.com",
-      "schedule": "30 5 * * *"
+      "schedule": "0 21 * * 0-5"
     }
   ],
   "functions": {
