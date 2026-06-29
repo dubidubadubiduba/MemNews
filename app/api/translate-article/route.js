@@ -34,7 +34,7 @@ export async function GET(request) {
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
-      .slice(0, 3000)
+      .slice(0, 12000)
   } catch {
     return NextResponse.json({ error: '기사를 불러올 수 없습니다.' }, { status: 502 })
   }
@@ -42,7 +42,7 @@ export async function GET(request) {
   try {
     const message = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 2048,
+      max_tokens: 8192,
       messages: [{
         role: 'user',
         content: `다음 영어 기사 본문을 한국어로 번역하라. 보고서체(~함/~임/~됨)로. 회사명·제품명·브랜드명은 영문 유지(Samsung, NVIDIA, Apple, HBM, DDR5 등). 광고·네비·메뉴 등 불필요한 내용은 제외하고 기사 본문만 번역:\n\n${text}`,
