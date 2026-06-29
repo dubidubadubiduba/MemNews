@@ -24,12 +24,7 @@ async function sendEmail(to, subject, html) {
 
 async function handler(request) {
   const authHeader = request.headers.get('authorization')
-  const { searchParams } = new URL(request.url)
-  const debugKey = searchParams.get('debug')
-  const authed =
-    authHeader === `Bearer ${process.env.CRON_SECRET}` ||
-    debugKey === 'chipbird-test-0629' // 임시 테스트용 트리거 — 확인 후 제거
-  if (!authed) {
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
