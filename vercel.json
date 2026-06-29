@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/send-newsletter",
-      "schedule": "10 3 * * *"
+      "schedule": "0 21 * * *"
     }
   ],
   "functions": {
