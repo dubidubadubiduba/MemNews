@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { SECTIONS } from '@/lib/keywords'
 
-const MAX_KW = 13
+const MAX_KW = 20
 
 const ALL_VALID_KEYWORDS = new Set(
   Object.values(SECTIONS).flatMap(s => Object.keys(s.keywords))
