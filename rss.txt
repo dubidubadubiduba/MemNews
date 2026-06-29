@@ -1,18 +1,48 @@
-# A3 Pulse (Apple)
+# ChipBird RSS 소스 (42개)
+# 업데이트: 2026-06-29 · lib/keywords.js(RSS_SOURCES) 기준 자동 생성
+
+## 직접 소스 — 원문 URL O, 전문보기 가능 (23)
 https://9to5mac.com/feed/
 https://feeds.macrumors.com/MacRumors-All
 https://www.theverge.com/rss/index.xml
-
-# Mobile Radar
 https://www.engadget.com/rss.xml
-https://www.theverge.com/rss/index.xml
 https://techcrunch.com/feed/
-
-# DRAM Brief
+http://feeds.arstechnica.com/arstechnica/index.rss
+https://www.wired.com/feed/rss
 https://www.tomshardware.com/feeds/all
-http://feeds.arstechnica.com/arstechnica/index.rss
+https://spectrum.ieee.org/feeds/feed.rss
+https://www.eetimes.com/feed/
+https://semianalysis.com/feed/
+https://www.semiengineering.com/feed/
+https://www.techpowerup.com/rss/news.xml
+https://www.theregister.com/headlines.atom
+https://www.nextplatform.com/feed/
+https://www.servethehome.com/feed/
+https://www.extremetech.com/feed
+https://venturebeat.com/feed/
+https://www.storagereview.com/feed
+https://blocksandfiles.com/feed/
+https://www.datacenterdynamics.com/en/rss/
+https://www.techspot.com/backend.xml
+https://videocardz.com/feed/
 
-# Big Tech
-https://techcrunch.com/feed/
-https://www.theverge.com/rss/index.xml
-http://feeds.arstechnica.com/arstechnica/index.rss
+## Google News 검색 RSS — 관련기사 대량 확보, 전문보기 X·우선순위 후순위 (19)
+https://news.google.com/rss/search?q=HBM+memory+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=DDR5+DRAM+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=LPDDR+mobile+memory+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=NAND+flash+memory+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=GDDR+graphics+memory+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=CXL+memory+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=enterprise+SSD+storage+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=semiconductor+foundry+TSMC+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=CoWoS+advanced+packaging+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=AI+data+center+chip+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=SoC+application+processor+chip+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=CPU+Xeon+EPYC+Ryzen+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=memory+chip+market+price+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=SK+Hynix+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=Micron+memory+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=Samsung+semiconductor+memory+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=NVIDIA+AI+chip+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=automotive+semiconductor+when:2d&hl=en-US&gl=US&ceid=US:en
+https://news.google.com/rss/search?q=chip+export+control+CHIPS+Act+when:2d&hl=en-US&gl=US&ceid=US:en

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { SECTIONS } from '@/lib/keywords'
 
-const MAX_KW = 13
+const MAX_KW = 20
 
 const ALL_VALID_KEYWORDS = new Set(
   Object.values(SECTIONS).flatMap(s => Object.keys(s.keywords))
@@ -13,6 +13,7 @@ export default function CustomizePage() {
   const [selected, setSelected] = useState([])
   const [saving, setSaving] = useState(false)
   const [email, setEmail] = useState('')
+  const [warnSections, setWarnSections] = useState([])
   const router = useRouter()
 
   useEffect(() => {
@@ -31,6 +32,7 @@ export default function CustomizePage() {
   }, [router])
 
   function toggle(kw) {
+    setWarnSections([])
     setSelected(prev => {
       if (prev.includes(kw)) return prev.filter(k => k !== kw)
       if (prev.length >= MAX_KW) return prev
@@ -38,8 +40,19 @@ export default function CustomizePage() {
     })
   }
 
+  // 각 섹션마다 최소 1개 선택됐는지 검사 → 빠진 섹션 이름 목록
+  function missingSections() {
+    return Object.entries(SECTIONS)
+      .filter(([, data]) => !Object.keys(data.keywords).some(kw => selected.includes(kw)))
+      .map(([name]) => name)
+  }
+
   async function handleSave() {
-    if (selected.length === 0) return
+    const missing = missingSections()
+    if (missing.length > 0) {
+      setWarnSections(missing)
+      return
+    }
     setSaving(true)
     await fetch('/api/users', {
       method: 'POST',
@@ -61,10 +74,13 @@ export default function CustomizePage() {
       <div className="max-w-2xl mx-auto px-4 pt-6 flex flex-col gap-4">
         {Object.entries(SECTIONS).map(([sectionName, sectionData], idx) => (
           <div key={sectionName} className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="px-5 py-3" style={{ backgroundColor: sectionData.color }}>
+            <div className="px-5 py-3 flex items-center justify-between" style={{ backgroundColor: sectionData.color }}>
               <span className="text-white font-bold text-sm tracking-wide">
                 Section {idx + 1} — {sectionName}
               </span>
+              {warnSections.includes(sectionName) && (
+                <span className="text-[11px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">최소 1개 선택</span>
+              )}
             </div>
             <div className="px-5 py-4 flex flex-wrap gap-3">
               {Object.keys(sectionData.keywords).map(kw => {
@@ -100,14 +116,16 @@ export default function CustomizePage() {
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <div className="flex flex-col gap-0.5">
-            <span className={`text-sm font-medium ${atLimit ? 'text-[#1428A0]' : 'text-gray-500'}`}>
-              {selected.length > 0 ? `${selected.length} / ${MAX_KW}개 선택됨${atLimit ? ' (최대)' : ''}` : '키워드를 선택해주세요'}
+            <span className={`text-sm font-medium ${warnSections.length > 0 ? 'text-red-500' : atLimit ? 'text-[#1428A0]' : 'text-gray-500'}`}>
+              {warnSections.length > 0
+                ? `각 섹션 최소 1개! 빠진 섹션: ${warnSections.join(', ')}`
+                : selected.length > 0 ? `${selected.length} / ${MAX_KW}개 선택됨${atLimit ? ' (최대)' : ''}` : '키워드를 선택해주세요'}
             </span>
             <span className="text-[11px] text-gray-300">여러 섹션에 걸친 키워드는 1개로 카운트</span>
           </div>
           <button
             onClick={handleSave}
-            disabled={selected.length === 0 || saving}
+            disabled={saving}
             className="bg-[#1428A0] hover:bg-[#0f1f8a] disabled:opacity-40 text-white rounded-lg px-8 py-3 font-semibold text-sm transition-colors"
           >
             {saving ? '저장 중...' : '저장하고 시작하기'}

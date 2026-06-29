@@ -89,15 +89,15 @@ function ArticleCard({ article }) {
   )
 }
 
-function AnalysisCard({ analysis, sectionIndex }) {
+function AnalysisCard({ analysis }) {
   const chains = analysis?.chains || []
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[350px]">
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col">
       <div className="px-4 py-3 flex-shrink-0 flex items-center gap-2" style={{ backgroundColor: '#475569' }}>
         <span style={{ color: '#FBBF24', fontSize: '18px', lineHeight: 1 }}>★</span>
         <span className="text-white font-bold text-lg tracking-wide uppercase">
-          Section {sectionIndex + 1} — 당사 Mem. 영향 분석
+          The Signal <span className="font-normal normal-case text-gray-300">— Memory Impact</span>
         </span>
       </div>
       <div className="px-4 py-2 overflow-y-auto flex-1 flex flex-col justify-around gap-1">
@@ -132,7 +132,7 @@ function AnalysisCard({ analysis, sectionIndex }) {
 
 function SectionCard({ sectionName, sectionData, articles, sectionIndex }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[350px]">
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-[450px]">
       <div className="px-4 py-3 flex-shrink-0" style={{ backgroundColor: sectionData.color }}>
         <span className="text-white font-bold text-lg tracking-wide uppercase">
           Section {sectionIndex + 1} — {sectionName}
@@ -224,6 +224,11 @@ export default function NewsPage() {
 
         {sections && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {analysis && (
+              <div className="md:col-span-2">
+                <AnalysisCard analysis={analysis} />
+              </div>
+            )}
             {sectionEntries.map(([name, data], idx) => (
               <SectionCard
                 key={name}
@@ -233,9 +238,6 @@ export default function NewsPage() {
                 sectionIndex={idx}
               />
             ))}
-            {analysis && (
-              <AnalysisCard analysis={analysis} sectionIndex={sectionEntries.length} />
-            )}
           </div>
         )}
       </div>

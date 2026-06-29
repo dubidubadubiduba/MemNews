@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server'
+import { kv } from '@vercel/kv'
 import { getAllUsers } from '@/lib/users'
 import { fetchNewsForKeywords, groupBySection } from '@/lib/rss'
 import { translateArticles, generateSecAnalysis } from '@/lib/translate'
 import { buildEmailHtml } from '@/lib/email-template'
+import { SECTIONS } from '@/lib/keywords'
 
 async function sendEmail(to, subject, html) {
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -22,14 +24,45 @@ async function sendEmail(to, subject, html) {
   if (!res.ok) throw new Error(await res.text())
 }
 
-export async function POST(request) {
+async function handler(request) {
   const authHeader = request.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const userAgent = request.headers.get('user-agent') || ''
+  const { searchParams } = new URL(request.url)
+  const testKey = searchParams.get('test') // 테스트 키
+  const testTo = searchParams.get('to')     // 테스트 수신자(1명만)
+  const isTest = testKey === 'send-test-9f3a' && !!testTo
+
+  // 인증: ① 테스트 모드 ② Vercel Cron(user-agent) ③ CRON_SECRET(헤더 또는 ?key=)
+  //  → 외부 정밀 스케줄러(cron-job.org 등)는 ?key=<CRON_SECRET> 로 호출
+  const keyParam = searchParams.get('key')
+  const isVercelCron = userAgent.toLowerCase().includes('vercel-cron')
+  const hasSecret = !!process.env.CRON_SECRET &&
+    (authHeader === `Bearer ${process.env.CRON_SECRET}` || keyParam === process.env.CRON_SECRET)
+
+  if (!isTest && !isVercelCron && !hasSecret) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const users = await getAllUsers()
-  const today = new Date().toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })
+  // 일요일(KST)은 발송 안 함 + 하루 1회만 발송(중복 방지)
+  if (!isTest) {
+    const kstWeekday = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Seoul', weekday: 'short' })
+    if (kstWeekday === 'Sun') {
+      return NextResponse.json({ skipped: true, reason: '일요일은 발송하지 않음' })
+    }
+    const kstDate = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })
+    const lock = await kv.set(`newsletter-sent:${kstDate}`, Date.now(), { nx: true, ex: 23 * 3600 })
+      .catch(() => 'OK')
+    if (lock === null) {
+      return NextResponse.json({ skipped: true, reason: '오늘 이미 발송됨', date: kstDate })
+    }
+  }
+
+  // 테스트 모드: 전 구독자 대신 지정한 1명에게만, 전체 키워드로 발송
+  const allKeywords = Object.values(SECTIONS).flatMap((s) => Object.keys(s.keywords))
+  const users = isTest
+    ? [{ email: testTo, keywords: allKeywords }]
+    : await getAllUsers()
+  const today = new Date().toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit', timeZone: 'Asia/Seoul' })
     .replace('. ', '/').replace('.', '')
 
   const results = []
@@ -57,9 +90,14 @@ export async function POST(request) {
 
       results.push({ email: user.email, status: 'sent' })
     } catch (err) {
+      console.error('[send-newsletter] 발송 실패:', user.email, err)
       results.push({ email: user.email, status: 'error', error: err.message })
     }
   }
 
-  return NextResponse.json({ results })
+  return NextResponse.json({ subscribers: users.length, results })
 }
+
+// Vercel Cron 은 GET 요청을 보냄. 수동 테스트(POST)도 가능하도록 둘 다 연결.
+export const GET = handler
+export const POST = handler

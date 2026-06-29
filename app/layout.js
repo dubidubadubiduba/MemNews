@@ -8,8 +8,20 @@ const noto = Noto_Sans_KR({
 })
 
 export const metadata = {
-  title: 'MemNews',
+  title: 'Chipbird',
   description: '맞춤형 반도체·메모리 뉴스레터',
+  openGraph: {
+    title: 'Chipbird',
+    description: '매일 아침, 밤새 바뀐 반도체 판도를 한국어로.',
+    siteName: 'Chipbird',
+    images: [{ url: 'https://memorynews-chipbird.vercel.app/og.png', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Chipbird',
+    description: '매일 아침, 밤새 바뀐 반도체 판도를 한국어로.',
+    images: ['https://memorynews-chipbird.vercel.app/og.png'],
+  },
 }
 
 export default function RootLayout({ children }) {

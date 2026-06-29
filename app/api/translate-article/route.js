@@ -11,6 +11,14 @@ export async function GET(request) {
   const url = searchParams.get('url')
   if (!url) return NextResponse.json({ error: 'url 없음' }, { status: 400 })
 
+  // Google News 출처는 링크 구조상 원문을 가져올 수 없음 → 캐시보다 먼저 처리(옛 캐시 무시)
+  const host = (() => { try { return new URL(url).hostname } catch { return '' } })()
+  if (host.includes('news.google.com')) {
+    return NextResponse.json({
+      error: '이 기사는 Google News 출처라 전문 자동번역이 안 돼요. (다른 출처 기사는 번역됩니다) 제목을 클릭하면 원문 기사로 이동해 확인할 수 있어요.',
+    })
+  }
+
   const cacheKey = `full:${url}`
   const cached = await kv.get(cacheKey).catch(() => null)
   if (cached) return NextResponse.json(cached)
@@ -34,15 +42,22 @@ export async function GET(request) {
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
-      .slice(0, 3000)
+      .slice(0, 12000)
   } catch {
     return NextResponse.json({ error: '기사를 불러올 수 없습니다.' }, { status: 502 })
+  }
+
+  // 본문 추출 실패(빈 내용)를 번역에 넘기면 "본문을 붙여달라"는 엉뚱한 답이 나옴 → 사전 차단
+  if (text.replace(/\s/g, '').length < 300) {
+    return NextResponse.json({
+      error: '원문 사이트가 본문을 제공하지 않아 전문을 불러올 수 없어요(봇 차단·스크립트 렌더). 원문 링크에서 확인해 주세요.',
+    })
   }
 
   try {
     const message = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 2048,
+      max_tokens: 8192,
       messages: [{
         role: 'user',
         content: `다음 영어 기사 본문을 한국어로 번역하라. 보고서체(~함/~임/~됨)로. 회사명·제품명·브랜드명은 영문 유지(Samsung, NVIDIA, Apple, HBM, DDR5 등). 광고·네비·메뉴 등 불필요한 내용은 제외하고 기사 본문만 번역:\n\n${text}`,
