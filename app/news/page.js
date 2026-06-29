@@ -97,7 +97,7 @@ function AnalysisCard({ analysis }) {
       <div className="px-4 py-3 flex-shrink-0 flex items-center gap-2" style={{ backgroundColor: '#475569' }}>
         <span style={{ color: '#FBBF24', fontSize: '18px', lineHeight: 1 }}>★</span>
         <span className="text-white font-bold text-lg tracking-wide uppercase">
-          당사 Mem. 영향 분석
+          The Signal <span className="font-normal normal-case text-gray-300">— Memory Impact</span>
         </span>
       </div>
       <div className="px-4 py-2 overflow-y-auto flex-1 flex flex-col justify-around gap-1">
