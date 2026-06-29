@@ -22,7 +22,7 @@ async function sendEmail(to, subject, html) {
   if (!res.ok) throw new Error(await res.text())
 }
 
-export async function POST(request) {
+async function handler(request) {
   const authHeader = request.headers.get('authorization')
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
@@ -63,3 +63,7 @@ export async function POST(request) {
 
   return NextResponse.json({ results })
 }
+
+// Vercel Cron 은 GET 요청을 보냄. 수동 테스트(POST)도 가능하도록 둘 다 연결.
+export const GET = handler
+export const POST = handler
