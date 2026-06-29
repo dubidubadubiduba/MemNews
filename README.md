@@ -3,7 +3,7 @@
 > **"매일 아침 6시, 12시간 먼저 일어나는 Early bird — Chip bird와 함께 밤새 바뀐 반도체 판도를 확인하세요."**
 
 삼성전자 메모리 반도체 사업부 담당자를 위한 맞춤형 뉴스레터 서비스.
-매일 아침 6시(KST, **일요일 제외**), 최근 **18시간** 이내 영어권 뉴스를 한국어로 번역해 이메일로 발송.
+매일 아침 6시(KST, **일요일 제외**), 최근 **12시간** 이내 영어권 뉴스를 한국어로 번역해 이메일로 발송.
 
 - 배포 URL: https://memorynews-chipbird.vercel.app
 - GitHub: https://github.com/dubidubadubiduba/memnews
@@ -67,7 +67,7 @@
 
 ## 뉴스 수집 & 캐싱
 
-- **수집 범위**: 최근 **18시간** (`lib/rss.js` cutoff)
+- **수집 범위**: 최근 **12시간** (`lib/rss.js` cutoff)
 - **결과 캐시**: 사용자·키워드 조합별 **30분** (`news:{email}:{hash}`) — 새로고침 깜빡임 방지, 번역 비용 절감. 강제 갱신: `/api/news?email=...&refresh=1`
 - **피드 백업 캐시**: 피드별 **1시간** (`feed:{url}`) — 피드 실패 시 마지막 정상 수집분으로 폴백
 - **번역 캐시**: 기사별 24h (`tr:{link}`), 전문 번역 24h (`full:{url}`)
@@ -94,7 +94,7 @@
 - **상단**: 파란 배경(#1428A0) + **흰색 로고 이미지**(`chipbird-logo-fixed.png`) + 날짜(KST)
 - **The Signal — Memory Impact**: 맨 위 풀폭(아래 2열 그리드와 좌우 edge 정렬)
 - **2×2 그리드**: 섹션 1~4, 박스 높이 450px 고정
-- **각 기사**: 제목 위 **키워드 배지**(웹과 동일) → 한글 제목 → 요약 → 출처 + **📄 전문보기 ›** 버튼(`/read?url=...`)
+- **각 기사**: 제목 위 **키워드 배지**(웹과 동일) → 한글 제목 → 요약 → **파비콘** + 출처 + **📄 전문보기 ›** 버튼(`/read?url=...`)
 - **하단**: 웹사이트 바로가기 버튼(로고는 제거됨)
 - 모든 날짜 라벨은 `Asia/Seoul` 기준
 
@@ -134,6 +134,8 @@ app/
     news/route.js            # 뉴스 조회 + 번역 + 분석 (+30분 결과 캐시)
     send-newsletter/route.js # 이메일 발송 (Cron/외부/테스트)
     translate-article/route.js # 기사 전문 번역 (Google News·빈본문 안내 처리)
+    test-email/route.js      # 테스트 발송 (GET ?secret=chipbird-test&to=이메일, 유저 키워드 기반)
+    admin/users/route.js     # 전체 유저 조회 (GET ?secret=chipbird-test)
 lib/
   keywords.js                # 섹션·키워드·RSS 소스(42) 정의
   rss.js                     # RSS 수집/파싱/우선순위 그루핑(+피드 백업 캐시, 구글 후순위)
@@ -181,7 +183,16 @@ KV_REST_API_TOKEN=...
 
 ---
 
-## Changelog (이번 작업)
+## Changelog
+
+### 2026-06-30
+- **뉴스 수집 범위**: 18시간 → **12시간**으로 축소 (`lib/rss.js`)
+- **이메일 파비콘**: 기사 출처 앞에 Google Favicon 서비스로 매체 파비콘 표시 (`lib/email-template.js`)
+- **날짜 KST 수정**: 날짜 계산에 `timeZone: 'Asia/Seoul'` 명시 (이메일 제목·본문 날짜 UTC→KST)
+- **테스트 이메일 엔드포인트**: `GET /api/test-email?secret=chipbird-test&to={이메일}` — 등록된 유저 키워드 기반 1인 발송
+- **관리자 유저 조회**: `GET /api/admin/users?secret=chipbird-test` — 전체 유저·키워드 목록 반환
+
+### 이전 작업
 
 - **발송 안정화**: Cron이 GET을 보내는데 라우트가 POST만 받던 버그 수정 → GET/POST 모두 처리. Vercel Cron user-agent 인증 추가(CRON_SECRET 없이도 발송). 일요일 제외 + 하루 1회 잠금 + `?key=` 인증.
 - **레이아웃**: 분석 박스를 **The Signal — Memory Impact**로 개명 + 맨 위 풀폭 이동, `산업` 섹션 제거 → 4섹션 2×2, 박스 450px 고정.
