@@ -3,6 +3,7 @@ import { getAllUsers } from '@/lib/users'
 import { fetchNewsForKeywords, groupBySection } from '@/lib/rss'
 import { translateArticles, generateSecAnalysis } from '@/lib/translate'
 import { buildEmailHtml } from '@/lib/email-template'
+import { SECTIONS } from '@/lib/keywords'
 
 async function sendEmail(to, subject, html) {
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -25,15 +26,19 @@ async function sendEmail(to, subject, html) {
 async function handler(request) {
   const authHeader = request.headers.get('authorization')
   const { searchParams } = new URL(request.url)
-  const debugKey = searchParams.get('debug')
-  const authed =
-    authHeader === `Bearer ${process.env.CRON_SECRET}` ||
-    debugKey === 'send-test-9f3a' // 임시 테스트용 트리거 — 확인 후 제거
-  if (!authed) {
+  const testKey = searchParams.get('test') // 테스트 키
+  const testTo = searchParams.get('to')     // 테스트 수신자(1명만)
+  const isTest = testKey === 'send-test-9f3a' && !!testTo
+
+  if (!isTest && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const users = await getAllUsers()
+  // 테스트 모드: 전 구독자 대신 지정한 1명에게만, 전체 키워드로 발송
+  const allKeywords = Object.values(SECTIONS).flatMap((s) => Object.keys(s.keywords))
+  const users = isTest
+    ? [{ email: testTo, keywords: allKeywords }]
+    : await getAllUsers()
   const today = new Date().toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit', timeZone: 'Asia/Seoul' })
     .replace('. ', '/').replace('.', '')
 
