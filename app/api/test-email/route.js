@@ -6,7 +6,7 @@ import { SECTIONS } from '@/lib/keywords'
 
 export const maxDuration = 60
 
-const DEFAULT_KEYWORDS = Object.values(SECTIONS).flatMap(s => Object.keys(s.keywords || {})).slice(0, 5)
+const DEFAULT_KEYWORDS = Object.values(SECTIONS).flatMap(s => Object.keys(s.keywords || {}).slice(0, 3))
 
 async function sendEmail(to, subject, html) {
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
