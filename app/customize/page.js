@@ -13,6 +13,7 @@ export default function CustomizePage() {
   const [selected, setSelected] = useState([])
   const [saving, setSaving] = useState(false)
   const [email, setEmail] = useState('')
+  const [minWarn, setMinWarn] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -30,7 +31,19 @@ export default function CustomizePage() {
       })
   }, [router])
 
+  useEffect(() => {
+    if (!minWarn) return
+    const t = setTimeout(() => setMinWarn(false), 2000)
+    return () => clearTimeout(t)
+  }, [minWarn])
+
   function toggle(kw) {
+    // 최소 1개 유지: 선택이 1개뿐일 때 그 1개 해제는 막고 안내
+    if (selected.includes(kw) && selected.length <= 1) {
+      setMinWarn(true)
+      return
+    }
+    setMinWarn(false)
     setSelected(prev => {
       if (prev.includes(kw)) return prev.filter(k => k !== kw)
       if (prev.length >= MAX_KW) return prev
@@ -100,8 +113,10 @@ export default function CustomizePage() {
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <div className="flex flex-col gap-0.5">
-            <span className={`text-sm font-medium ${atLimit ? 'text-[#1428A0]' : 'text-gray-500'}`}>
-              {selected.length > 0 ? `${selected.length} / ${MAX_KW}개 선택됨${atLimit ? ' (최대)' : ''}` : '키워드를 선택해주세요'}
+            <span className={`text-sm font-medium ${minWarn ? 'text-red-500' : atLimit ? 'text-[#1428A0]' : 'text-gray-500'}`}>
+              {minWarn
+                ? '최소 1개는 선택해야 해요'
+                : selected.length > 0 ? `${selected.length} / ${MAX_KW}개 선택됨${atLimit ? ' (최대)' : ''}` : '키워드를 선택해주세요'}
             </span>
             <span className="text-[11px] text-gray-300">여러 섹션에 걸친 키워드는 1개로 카운트</span>
           </div>
