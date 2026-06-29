@@ -41,7 +41,7 @@ export async function GET(request) {
 
   const keywords = user.keywords || []
 
-  const today = new Date().toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })
+  const today = new Date().toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit', timeZone: 'Asia/Seoul' })
     .replace('. ', '/').replace('.', '')
 
   const articles = await fetchNewsForKeywords(keywords)
