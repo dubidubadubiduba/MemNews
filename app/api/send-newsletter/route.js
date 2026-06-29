@@ -34,7 +34,7 @@ async function handler(request) {
   }
 
   const users = await getAllUsers()
-  const today = new Date().toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })
+  const today = new Date().toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit', timeZone: 'Asia/Seoul' })
     .replace('. ', '/').replace('.', '')
 
   const results = []
