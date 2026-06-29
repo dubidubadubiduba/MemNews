@@ -25,12 +25,18 @@ async function sendEmail(to, subject, html) {
 
 async function handler(request) {
   const authHeader = request.headers.get('authorization')
+  const userAgent = request.headers.get('user-agent') || ''
   const { searchParams } = new URL(request.url)
   const testKey = searchParams.get('test') // 테스트 키
   const testTo = searchParams.get('to')     // 테스트 수신자(1명만)
   const isTest = testKey === 'send-test-9f3a' && !!testTo
 
-  if (!isTest && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  // 인증: ① 테스트 모드 ② Vercel Cron(user-agent로 식별, CRON_SECRET 미설정이어도 동작)
+  //       ③ CRON_SECRET 일치(설정돼 있으면 더 안전)
+  const isVercelCron = userAgent.toLowerCase().includes('vercel-cron')
+  const hasSecret = !!process.env.CRON_SECRET && authHeader === `Bearer ${process.env.CRON_SECRET}`
+
+  if (!isTest && !isVercelCron && !hasSecret) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
