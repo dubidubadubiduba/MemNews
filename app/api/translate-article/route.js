@@ -11,6 +11,14 @@ export async function GET(request) {
   const url = searchParams.get('url')
   if (!url) return NextResponse.json({ error: 'url 없음' }, { status: 400 })
 
+  // Google News 출처는 링크 구조상 원문을 가져올 수 없음 → 캐시보다 먼저 처리(옛 캐시 무시)
+  const host = (() => { try { return new URL(url).hostname } catch { return '' } })()
+  if (host.includes('news.google.com')) {
+    return NextResponse.json({
+      error: '이 기사는 Google News 출처라 전문 자동번역이 안 돼요. (다른 출처 기사는 번역됩니다) 제목을 클릭하면 원문 기사로 이동해 확인할 수 있어요.',
+    })
+  }
+
   const cacheKey = `full:${url}`
   const cached = await kv.get(cacheKey).catch(() => null)
   if (cached) return NextResponse.json(cached)
@@ -40,12 +48,6 @@ export async function GET(request) {
   }
 
   // 본문 추출 실패(빈 내용)를 번역에 넘기면 "본문을 붙여달라"는 엉뚱한 답이 나옴 → 사전 차단
-  const host = (() => { try { return new URL(url).hostname } catch { return '' } })()
-  if (host.includes('news.google.com')) {
-    return NextResponse.json({
-      error: '이 기사는 Google News 출처라 원문 전문을 자동으로 불러올 수 없어요. 카드의 원문 링크에서 확인해 주세요.',
-    })
-  }
   if (text.replace(/\s/g, '').length < 300) {
     return NextResponse.json({
       error: '원문 사이트가 본문을 제공하지 않아 전문을 불러올 수 없어요(봇 차단·스크립트 렌더). 원문 링크에서 확인해 주세요.',
