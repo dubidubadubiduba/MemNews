@@ -2,11 +2,11 @@
 
 > **"매일 아침 6시, 12시간 먼저 일어나는 Early bird — Chip bird와 함께 밤새 바뀐 반도체 판도를 확인하세요."**
 
-삼성전자 메모리 반도체 사업부 담당자를 위한 맞춤형 뉴스레터 서비스.  
-매일 아침 6시(KST), 최근 12시간 이내 영어권 뉴스를 한국어로 번역해 이메일로 발송.
+삼성전자 메모리 반도체 사업부 담당자를 위한 맞춤형 뉴스레터 서비스.
+매일 아침 6시(KST, **일요일 제외**), 최근 **18시간** 이내 영어권 뉴스를 한국어로 번역해 이메일로 발송.
 
-배포 URL: https://mem-news-pi3h.vercel.app  
-GitHub: https://github.com/dubidubadubiduba/MemNews
+- 배포 URL: https://memorynews-chipbird.vercel.app
+- GitHub: https://github.com/dubidubadubiduba/memnews
 
 ---
 
@@ -16,202 +16,177 @@ GitHub: https://github.com/dubidubadubiduba/MemNews
 비밀번호 입력(asdf) → 이메일 등록(개인정보 동의) → 키워드 선택 → 뉴스 피드 확인
 ```
 
-매일 UTC 21:00 (한국 오전 6시) Vercel Cron이 `/api/send-newsletter`를 호출해 이메일 자동 발송.
+매주 월~토 06:00 KST(= UTC 21:00) Vercel Cron이 `/api/send-newsletter`를 호출해 이메일 자동 발송.
 
 ---
 
 ## 기술 스택
 
-- **Frontend/Backend**: Next.js 16 (App Router, JavaScript)
+- **Frontend/Backend**: Next.js 16 (App Router, JavaScript) / React 19
 - **번역**: Claude Haiku (`claude-haiku-4-5-20251001`) — 고유명사 영문 원칙, Redis 캐시(24h TTL)
-- **기사 전문 번역**: Claude Haiku — `/api/translate-article` (Redis 캐시 24h)
-- **이메일 발송**: Brevo REST API (무료 300통/일, 도메인 불필요)
-- **유저 저장·번역 캐시**: Upstash Redis (`@vercel/kv`)
-- **배포**: Vercel serverless (모든 API maxDuration: 60s)
+- **기사 전문 번역**: Claude Haiku — `/api/translate-article` (입력 12,000자 / 출력 8,192토큰, Redis 24h 캐시)
+- **이메일 발송**: Brevo REST API (무료 300통/일, 발신 `gipunbam@gmail.com`)
+- **유저 저장·캐시**: Upstash Redis (`@vercel/kv`)
+- **배포**: Vercel serverless (관련 API maxDuration: 60s)
 
 ---
 
-## UI 구성
+## 섹션 구조 (현재)
 
-- **로고**: `public/chipbird-logo-fixed.png` — 흰색 로고, 투명 배경(910×802px), 어두운 배경 및 불필요한 아티팩트 제거 처리
-- **색상**: 삼성 블루 `#1428A0`, 네이비 `#0A1931`
-- **섹션 타이틀**: `text-lg` (기존 `text-xs`에서 1.5배 확대)
-- **기사 번역**: 각 기사 우측 하단 "번역 전문" 버튼 → Claude API로 전문 번역, 접기/펼치기 토글
+이메일/웹 모두: **The Signal(맨 위 풀폭) + 2×2 그리드(섹션 1~4)** 레이아웃.
 
----
+| 위치 | 이름 | 상위 키워드 | 비고 |
+|------|------|------------|------|
+| 맨 위(풀폭) | **The Signal — Memory Impact** | — | 당사 Mem. 영향 분석. 전체 뉴스 기반 자동 분석, 항상 표시 |
+| Section 1 | **제품/기술** | 13 (DDR, LPDDR, GDDR, SOCAMM, LPCAMM, HBM, CXL Memory, UFS, eMMC, SSD, ePOP, PIM, **CoWoS**) | |
+| Section 2 | **응용** | 13 (Mobile, SVR, HBM, Consumer, **SOC**, **CPU/AP**, **AI·데이터센터**, **Foundry**, **Automotive**, eStorage, SSD, PC, Graphic) | |
+| Section 3 | **고객** | 27 (Apple, Xiaomi, **OPPO**, **vivo**, Google, NVIDIA, AMD, Tesla, Hyundai, BYD … ) | |
+| Section 4 | **Ref.** | 9 (SK Hynix, Micron, CXMT, YMTC, JHICC, Nanya, Kioxia, SanDisk, Solidigm) | 경쟁사 모니터링 |
 
-## 섹션 구조
-
-| 섹션 | 이름 | 상위 키워드 수 | 비고 |
-|------|------|---------------|------|
-| Section 1 | 제품 | 12 (DDR, LPDDR, GDDR, SOCAMM, LPCAMM, HBM, CXL Memory, UFS, eMMC, SSD, ePOP, PIM) | 키워드당 최대 1개 |
-| Section 2 | 응용 | 9 (Mobile, SVR, HBM, Consumer, Auto, eStorage, SSD, PC, Graphic) | 키워드당 최대 1개 |
-| Section 3 | 고객 | 25 (Apple, NVIDIA, AMD, Tesla, Hyundai 등) | 키워드당 최대 1개 |
-| Section 4 | 산업 | 10 (Big Tech, Mobile, SOC, AI·데이터센터, Foundry, 메모리 시황, 첨단 패키징, Automotive, 장비·소재, 지정학·통상) | 키워드당 최대 1개 |
-| Section 5 | Ref. | 9 (SK Hynix, Micron, CXMT, YMTC, JHICC, Nanya, Kioxia, SanDisk, Solidigm) | 경쟁사 모니터링 |
-| Section 6 | 당사 Mem. 영향 분석 | — | 전체 뉴스 기반 자동 분석 |
-
-설정 화면에서 최대 **13개** 키워드 선택 가능. 섹션당 최대 10개 기사 표시, 카드 내 스크롤.
+- 설정 화면에서 **최대 20개** 키워드 선택. **각 섹션 최소 1개** 선택해야 저장 가능(빠진 섹션 경고).
+- 섹션당 최대 10개 기사, 키워드당 최대 1개. 박스 높이 **450px 고정**(섹션 1~4).
+- **이전 대비 변경**: `산업` 섹션 제거, 산업의 SOC/AI·데이터센터/Foundry/Automotive를 응용으로 이동, 응용의 Auto 삭제, 제품→제품/기술 개명 + CoWoS 추가, 고객에 OPPO/vivo 추가.
 
 ---
 
-## 뉴스 우선순위 로직
+## 뉴스 우선순위 로직 (`lib/rss.js`)
 
 각 상위 keyword당 최대 1개 기사를 다음 순서로 선택:
 
-1. **제목 매칭 수** — 해당 keyword의 하위 검색 쿼리가 기사 제목에 몇 개 포함되는지 (많을수록 우선)
-2. **전체 매칭 수** — 제목 + 본문 합산 매칭 수 (관련성 지표)
-3. **최신순** — 동점이면 발행시각 최신 기사 우선
-4. **중복 제거** — 이미 다른 keyword에서 선택된 기사는 건너뜀
+1. **직접소스 우선** — 전문보기가 안 되는 Google News 출처 기사는 후순위 (`isGoogle`)
+2. **제목 매칭 수** — keyword 하위 쿼리가 제목에 포함된 수
+3. **전체 매칭 수** — 제목+본문 합산 매칭 수
+4. **최신순** — 동점 시 발행시각 최신 우선
+5. **중복 제거** — **전 섹션 공유** dedup(`seen`)으로 같은 기사가 여러 섹션에 중복 노출되지 않음
 
-섹션 내 총 10개 초과 시 중단.
-
-### 검색 쿼리 매칭 방식 (`phraseMatches`)
-
-- 정확한 문자열 포함 시 매칭
-- 또는: 쿼리 단어(3자 이상) 전부 본문에 포함 시 매칭
-- 상위 keyword 이름 자체도 쿼리 배열에 포함 (예: `DDR`, `PIM`, `JHICC` 등 단독 검색)
+### 검색 쿼리 매칭 (`phraseMatches`)
+- 정확한 문자열 포함, 또는 쿼리 단어(3자 이상) 전부 본문 포함 시 매칭
+- 상위 keyword 이름 자체도 쿼리에 포함
 
 ---
 
-## Section 6: 당사 Mem. 영향 분석
+## 뉴스 수집 & 캐싱
 
-당일 번역된 모든 기사(최대 30개)를 Claude Haiku에 전달해 삼성전자 Memory 반도체 사업부에 미칠 영향을 음슴체로 자동 분석. 키워드 선택 없이 항상 표시.
-
----
-
-## 로컬 개발 환경 세팅
-
-### 1. 레포 클론
-
-```bash
-git clone https://github.com/dubidubadubiduba/Mem12h.git
-cd Mem12h
-npm install
-```
-
-### 2. 환경변수 설정
-
-프로젝트 루트에 `.env.local` 파일 생성:
-
-```
-ANTHROPIC_API_KEY=여기에_Claude_API_키
-BREVO_API_KEY=여기에_Brevo_API_키
-CRON_SECRET=Mem12h
-KV_REST_API_URL=여기에_Upstash_URL
-KV_REST_API_TOKEN=여기에_Upstash_TOKEN
-```
-
-### 3. 개발 서버 실행
-
-```bash
-npm run dev
-```
-
-http://localhost:3000 접속 → 비밀번호: `asdf`
+- **수집 범위**: 최근 **18시간** (`lib/rss.js` cutoff)
+- **결과 캐시**: 사용자·키워드 조합별 **30분** (`news:{email}:{hash}`) — 새로고침 깜빡임 방지, 번역 비용 절감. 강제 갱신: `/api/news?email=...&refresh=1`
+- **피드 백업 캐시**: 피드별 **1시간** (`feed:{url}`) — 피드 실패 시 마지막 정상 수집분으로 폴백
+- **번역 캐시**: 기사별 24h (`tr:{link}`), 전문 번역 24h (`full:{url}`)
 
 ---
 
-## Vercel 배포 (새 컴퓨터에서)
-
-### 1. git 설정 및 푸시
-
-```bash
-git config --global user.email "gipunbam@gmail.com"
-git config --global user.name "dubidubadubiduba"
-git add .
-git commit -m "커밋 메시지"
-git push
-```
-
-### 2. Vercel 프로젝트 연결 (CLI)
-
-```bash
-vercel link --yes --project mem-news-pi3h --token <VERCEL_TOKEN>
-```
-
-### 3. 환경변수 설정
-
-```bash
-echo "키값" | vercel env add ANTHROPIC_API_KEY production --yes
-echo "키값" | vercel env add BREVO_API_KEY production --yes
-echo "Mem12h" | vercel env add CRON_SECRET production --yes
-```
-
-Upstash KV 환경변수는 Vercel 대시보드 → Storage → Upstash 연결 시 자동 추가됨.
-
-### 4. 배포
-
-```bash
-vercel --prod --yes
-```
-
----
-
-## 필요한 외부 서비스 & API 키
-
-| 서비스 | 용도 | 발급 위치 | 무료 한도 |
-|--------|------|-----------|-----------|
-| Anthropic | 번역 + 기사 전문 번역 + 영향 분석 | console.anthropic.com | 사용량 기반 |
-| Brevo | 이메일 발송 | app.brevo.com → Settings → API Keys | 300통/일 |
-| Upstash | 유저 데이터 저장 + 번역 캐시 (Redis) | Vercel 마켓플레이스 → Upstash 연결 | 500,000 req/월 |
-| Vercel | 호스팅 + Cron | vercel.com | 무료 |
-
----
-
-## 주요 파일 구조
-
-```
-app/
-  page.js                    # 비밀번호 입력 페이지 (비밀번호: asdf)
-  register/page.js           # 이메일 등록 페이지
-  customize/page.js          # 키워드 선택 페이지
-  news/page.js               # 뉴스 피드 페이지 (6개 섹션, 번역 전문 버튼 포함)
-  api/
-    users/route.js           # 유저 등록/조회 API (Upstash KV)
-    news/route.js            # 뉴스 조회 + 번역 + 영향 분석 API
-    send-newsletter/route.js # 이메일 발송 API (Cron 호출)
-    translate-article/       # 기사 전문 번역 API (Claude Haiku + Redis 24h 캐시)
-      route.js
-lib/
-  keywords.js                # 상위 65개 키워드 + 하위 검색 쿼리 + RSS 소스 18개 정의
-  rss.js                     # RSS 수집, 파싱, 우선순위 기반 그루핑
-  translate.js               # Claude Haiku 번역 + 당사 Mem. 영향 분석
-  email-template.js          # 이메일 HTML 템플릿
-  users.js                   # Upstash KV 유저 CRUD
-public/
-  chipbird-logo-fixed.png    # 흰색 로고 (투명 배경, 910×802px, 아티팩트 제거)
-  chipbird-logo-white.png    # 원본 흰색 로고 (원본 보관용)
-  chipbird-logo-navy.png     # 네이비 로고
-  chipbird-logo-black.png    # 블랙 로고 (이메일 푸터용)
-vercel.json                  # Cron 설정 (매일 UTC 21:00 = KST 06:00)
-memnews_keywords.md          # 키워드 체계 원본 문서 (상위 65 · 하위 630)
-```
-
----
-
-## 뉴스 번역 규칙
-
-- 번역 모델: Claude Haiku (`claude-haiku-4-5-20251001`)
-- 제목: 보고서체 (~함/~임/~됨), 40자 이내
-- 본문 요약: 2~3문장 보고서체
-- **회사명·제품명·브랜드명은 영문 원문 유지** (Samsung, NVIDIA, Apple 등)
-
----
-
-## RSS 피드 (18개 · 영어 전용)
+## RSS 소스 (42개 · 영어)
 
 | 분류 | 매체 |
 |------|------|
-| Apple 전문 | 9to5Mac, MacRumors |
+| Apple | 9to5Mac, MacRumors |
 | 기술 종합 | The Verge, Engadget, TechCrunch, Ars Technica, Wired |
 | 하드웨어·반도체 | Tom's Hardware, IEEE Spectrum, EE Times, SemiAnalysis, SemiEngineering, TechPowerUp, The Register, The Next Platform, ServeTheHome, ExtremeTech |
+| 스토리지·메모리·DC·GPU (직접소스) | StorageReview, Blocks&Files, DatacenterDynamics, TechSpot, VideoCardz |
 | AI·비즈니스 | VentureBeat |
+| **Google News 검색 RSS** | 반도체 토픽별 19종 (HBM, DDR5, LPDDR, NAND, GDDR, CXL, SSD, Foundry, CoWoS, AI DC, SoC, CPU, 메모리 시황, SK Hynix, Micron, Samsung, NVIDIA, automotive, 수출규제) |
+
+- Google News는 관련 기사를 대량 확보하지만 링크가 암호화돼 **전문보기 불가** → 우선순위 후순위 + 전문보기 시 안내 메시지.
 
 ---
 
-## Cron 발송 일정
+## 이메일 양식 (`lib/email-template.js`)
 
-- 발송 시각: 매일 오전 6시 (KST) = UTC 21:00
-- 발송 대상: Upstash에 등록된 전체 유저
-- 인증: `Authorization: Bearer <CRON_SECRET>` 헤더
+- **상단**: 파란 배경(#1428A0) + **흰색 로고 이미지**(`chipbird-logo-fixed.png`) + 날짜(KST)
+- **The Signal — Memory Impact**: 맨 위 풀폭(아래 2열 그리드와 좌우 edge 정렬)
+- **2×2 그리드**: 섹션 1~4, 박스 높이 450px 고정
+- **각 기사**: 제목 위 **키워드 배지**(웹과 동일) → 한글 제목 → 요약 → 출처 + **📄 전문보기 ›** 버튼(`/read?url=...`)
+- **하단**: 웹사이트 바로가기 버튼(로고는 제거됨)
+- 모든 날짜 라벨은 `Asia/Seoul` 기준
+
+---
+
+## 발송(Cron) & 정확한 시각
+
+- **스케줄**: `vercel.json` → `0 21 * * 0-5` = **월~토 06:00 KST**(UTC 21:00, 일요일 제외)
+- **코드 가드** (`/api/send-newsletter`):
+  - KST 일요일이면 발송 스킵
+  - **하루 1회 잠금**: `newsletter-sent:{KST날짜}` (NX, 23h) — 다중 스케줄러 중복 발송 방지
+- **인증** (셋 중 하나):
+  1. 테스트 모드 `?test=send-test-9f3a&to=<email>` — 지정 1명에게만 발송(인증 불필요)
+  2. Vercel Cron — `user-agent: vercel-cron` 자동 인식 (CRON_SECRET 미설정이어도 동작)
+  3. `Authorization: Bearer <CRON_SECRET>` 또는 `?key=<CRON_SECRET>` — 외부 스케줄러용
+- **정확히 06:00 발송**: Vercel Hobby 크론은 정시 ±1시간 오차가 있음. 정확한 :00이 필요하면 **외부 정밀 스케줄러**(예: cron-job.org)로 `…/api/send-newsletter?key=<CRON_SECRET>`를 06:00 Asia/Seoul·월~토로 호출. 하루 1회 잠금 덕분에 Vercel 크론과 동시 운영해도 중복 발송 없음.
+
+### 테스트 발송 (구독자 전체에 안 보내고 1명만)
+```
+https://memorynews-chipbird.vercel.app/api/send-newsletter?test=send-test-9f3a&to=alwayshp2gth@naver.com
+```
+
+---
+
+## 페이지 / API
+
+```
+app/
+  page.js                    # 비밀번호 입력 (asdf)
+  register/page.js           # 이메일 등록
+  customize/page.js          # 키워드 선택 (최대 20 · 섹션별 최소 1 검증)
+  news/page.js               # 뉴스 피드 (The Signal 풀폭 + 섹션 1~4, 키워드 배지, 번역 전문)
+  read/page.js               # 기사 전문 번역 보기 페이지 (이메일 '전문보기' 대상)
+  layout.js                  # 메타데이터(title: Chipbird, OG 이미지)
+  api/
+    users/route.js           # 유저 등록/조회 (Upstash KV)
+    news/route.js            # 뉴스 조회 + 번역 + 분석 (+30분 결과 캐시)
+    send-newsletter/route.js # 이메일 발송 (Cron/외부/테스트)
+    translate-article/route.js # 기사 전문 번역 (Google News·빈본문 안내 처리)
+lib/
+  keywords.js                # 섹션·키워드·RSS 소스(42) 정의
+  rss.js                     # RSS 수집/파싱/우선순위 그루핑(+피드 백업 캐시, 구글 후순위)
+  translate.js               # Claude Haiku 번역 + The Signal 분석
+  email-template.js          # 이메일 HTML 템플릿
+  users.js                   # Upstash KV 유저 CRUD
+public/
+  chipbird-logo-fixed.png    # 흰색 로고(투명, 헤더용)
+  chipbird-logo-white.png    # 원본 흰색 로고
+  og.png                     # 공유 썸네일(삼성블루 배경 + 흰색 로고, 1200×630, 불투명)
+vercel.json                  # Cron(0 21 * * 0-5) + 함수 maxDuration
+```
+
+---
+
+## 로컬 개발
+
+```bash
+git clone https://github.com/dubidubadubiduba/memnews.git
+cd memnews
+npm install
+npm run dev   # http://localhost:3000 → 비밀번호: asdf
+```
+
+### 환경변수 (`.env.local`)
+```
+ANTHROPIC_API_KEY=...
+BREVO_API_KEY=...
+CRON_SECRET=...                 # 외부 스케줄러(?key=) 사용 시 필요
+KV_REST_API_URL=...
+KV_REST_API_TOKEN=...
+```
+
+---
+
+## 필요한 외부 서비스
+
+| 서비스 | 용도 | 무료 한도 |
+|--------|------|-----------|
+| Anthropic | 번역·전문번역·The Signal 분석 | 사용량 기반 |
+| Brevo | 이메일 발송 | 300통/일 |
+| Upstash (KV) | 유저·캐시 저장 | 500,000 req/월 |
+| Vercel | 호스팅 + Cron | 무료 |
+| (선택) cron-job.org | 정확한 06:00 발송 트리거 | 무료 |
+
+---
+
+## Changelog (이번 작업)
+
+- **발송 안정화**: Cron이 GET을 보내는데 라우트가 POST만 받던 버그 수정 → GET/POST 모두 처리. Vercel Cron user-agent 인증 추가(CRON_SECRET 없이도 발송). 일요일 제외 + 하루 1회 잠금 + `?key=` 인증.
+- **레이아웃**: 분석 박스를 **The Signal — Memory Impact**로 개명 + 맨 위 풀폭 이동, `산업` 섹션 제거 → 4섹션 2×2, 박스 450px 고정.
+- **키워드**: 제품→제품/기술(+CoWoS), 응용에 SOC/AI·데이터센터/Foundry/Automotive 이동 + CPU/AP 추가(Auto 삭제), 고객에 OPPO/vivo 추가. 최대 20개 선택 + 섹션별 최소 1개 검증.
+- **뉴스 품질**: 수집 18시간으로 확대, RSS 42개로 확장(무료 직접소스 + Google News 검색), 섹션 간 중복 제거, 결과 30분 캐시 + 피드 1h 백업, 구글뉴스 후순위.
+- **이메일**: 상단 로고 이미지, 키워드 배지, 기사별 전문보기(`/read`), 하단 로고 제거, 날짜 KST.
+- **공유 썸네일**: `public/og.png`(삼성블루 + 흰 로고) 정적 이미지로 연결.
+- **번역 전문**: Google News·빈 본문일 때 엉뚱한 응답 대신 안내 메시지(캐시보다 먼저 처리).
