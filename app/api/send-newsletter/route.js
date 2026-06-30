@@ -24,6 +24,20 @@ async function sendEmail(to, subject, html) {
   if (!res.ok) throw new Error(await res.text())
 }
 
+// 동시 실행 수를 제한하며 비동기 매핑 (레이트리밋·타임아웃 방지)
+async function mapLimit(items, limit, fn) {
+  const results = new Array(items.length)
+  let next = 0
+  async function worker() {
+    while (next < items.length) {
+      const i = next++
+      results[i] = await fn(items[i], i)
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker))
+  return results
+}
+
 async function handler(request) {
   const authHeader = request.headers.get('authorization')
   const userAgent = request.headers.get('user-agent') || ''
@@ -79,8 +93,13 @@ async function handler(request) {
   // RSS 풀은 전 유저 공통 → 한 번만 수집 (유저당 42피드 재수집 = 타임아웃 주원인 제거)
   const pool = await fetchNewsForKeywords([])
 
-  // 유저별 처리를 병렬화 (총합→최댓값으로 단축, 60초 타임아웃 방지)
-  const results = await Promise.all(users.map(async (user) => {
+  // 매크로 분석 1회 + 인기 기사 번역 캐시 워밍 (전 유저 공유 → Claude 호출 대폭 절감)
+  const popularArticles = Object.values(groupBySection(pool, allKeywords)).flat()
+  const popularTranslated = await translateArticles(popularArticles) // tr: 캐시 워밍
+  const globalAnalysis = await generateSecAnalysis(popularTranslated)
+
+  // 유저별 처리: 동시 5개 제한(레이트리밋 방지). 번역은 위 워밍으로 대부분 캐시 적중
+  const results = await mapLimit(users, 5, async (user) => {
     try {
       const grouped = groupBySection(pool, user.keywords || [])
       const sectionNames = Object.keys(grouped)
@@ -95,15 +114,14 @@ async function handler(request) {
         idx += count
       }
 
-      const analysis = await generateSecAnalysis(translated)
-      const html = buildEmailHtml(translatedGrouped, today, analysis)
+      const html = buildEmailHtml(translatedGrouped, today, globalAnalysis)
       await sendEmail(user.email, `[ChipBird] ${today} 오늘의 ChipBird`, html)
       return { email: user.email, status: 'sent' }
     } catch (err) {
       console.error('[send-newsletter] 발송 실패:', user.email, err)
       return { email: user.email, status: 'error', error: err.message }
     }
-  }))
+  })
 
   const report = {
     startedAt,
