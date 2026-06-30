@@ -32,6 +32,15 @@ async function handler(request) {
   const testTo = searchParams.get('to')     // 테스트 수신자(1명만)
   const isTest = testKey === 'send-test-9f3a' && !!testTo
 
+  // 발송 리포트 조회(디버그): ?report=send-test-9f3a[&date=YYYY-MM-DD]
+  const reportToken = searchParams.get('report')
+  if (reportToken === 'send-test-9f3a') {
+    const date = searchParams.get('date') ||
+      new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })
+    const rep = await kv.get(`newsletter-report:${date}`).catch(() => null)
+    return NextResponse.json(rep || { error: `해당 날짜 리포트 없음: ${date}` })
+  }
+
   // 인증: ① 테스트 모드 ② Vercel Cron(user-agent) ③ CRON_SECRET(헤더 또는 ?key=)
   //  → 외부 정밀 스케줄러(cron-job.org 등)는 ?key=<CRON_SECRET> 로 호출
   const keyParam = searchParams.get('key')
@@ -65,13 +74,15 @@ async function handler(request) {
   const today = new Date().toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit', timeZone: 'Asia/Seoul' })
     .replace('. ', '/').replace('.', '')
 
-  const results = []
+  const startedAt = new Date().toISOString()
 
-  for (const user of users) {
+  // RSS 풀은 전 유저 공통 → 한 번만 수집 (유저당 42피드 재수집 = 타임아웃 주원인 제거)
+  const pool = await fetchNewsForKeywords([])
+
+  // 유저별 처리를 병렬화 (총합→최댓값으로 단축, 60초 타임아웃 방지)
+  const results = await Promise.all(users.map(async (user) => {
     try {
-      const articles = await fetchNewsForKeywords(user.keywords || [])
-      const grouped = groupBySection(articles, user.keywords || [])
-
+      const grouped = groupBySection(pool, user.keywords || [])
       const sectionNames = Object.keys(grouped)
       const allArticles = sectionNames.flatMap(s => grouped[s])
       const translated = await translateArticles(allArticles)
@@ -87,15 +98,29 @@ async function handler(request) {
       const analysis = await generateSecAnalysis(translated)
       const html = buildEmailHtml(translatedGrouped, today, analysis)
       await sendEmail(user.email, `[ChipBird] ${today} 오늘의 ChipBird`, html)
-
-      results.push({ email: user.email, status: 'sent' })
+      return { email: user.email, status: 'sent' }
     } catch (err) {
       console.error('[send-newsletter] 발송 실패:', user.email, err)
-      results.push({ email: user.email, status: 'error', error: err.message })
+      return { email: user.email, status: 'error', error: err.message }
     }
+  }))
+
+  const report = {
+    startedAt,
+    finishedAt: new Date().toISOString(),
+    subscribers: users.length,
+    sent: results.filter(r => r.status === 'sent').length,
+    errors: results.filter(r => r.status === 'error').length,
+    results,
   }
 
-  return NextResponse.json({ subscribers: users.length, results })
+  // 발송 리포트 저장(7일) → ?report=send-test-9f3a 로 조회
+  if (!isTest) {
+    const kstDate = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })
+    await kv.set(`newsletter-report:${kstDate}`, report, { ex: 7 * 24 * 3600 }).catch(() => {})
+  }
+
+  return NextResponse.json(report)
 }
 
 // Vercel Cron 은 GET 요청을 보냄. 수동 테스트(POST)도 가능하도록 둘 다 연결.
