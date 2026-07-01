@@ -89,16 +89,27 @@ function ArticleCard({ article }) {
   )
 }
 
-function AnalysisCard({ analysis }) {
+function AnalysisCard({ analysis, onRetry, loading }) {
   const chains = analysis?.chains || []
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col">
-      <div className="px-4 py-3 flex-shrink-0 flex items-center gap-2" style={{ backgroundColor: '#475569' }}>
-        <span style={{ color: '#FBBF24', fontSize: '18px', lineHeight: 1 }}>★</span>
-        <span className="text-white font-bold text-lg tracking-wide uppercase">
-          The Signal <span className="font-normal normal-case text-gray-300">— Memory Impact</span>
-        </span>
+      <div className="px-4 py-3 flex-shrink-0 flex items-center justify-between" style={{ backgroundColor: '#475569' }}>
+        <div className="flex items-center gap-2">
+          <span style={{ color: '#FBBF24', fontSize: '18px', lineHeight: 1 }}>★</span>
+          <span className="text-white font-bold text-lg tracking-wide uppercase">
+            The Signal <span className="font-normal normal-case text-gray-300">— Memory Impact</span>
+          </span>
+        </div>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            disabled={loading}
+            className="flex-shrink-0 text-white/90 hover:text-white text-xs bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full transition-colors disabled:opacity-50"
+          >
+            {loading ? '재생성 중…' : '↻ 재생성'}
+          </button>
+        )}
       </div>
       <div className="px-4 py-2 overflow-y-auto flex-1 flex flex-col justify-around gap-1">
         {chains.length > 0 ? chains.map((chain, i) => (
@@ -123,7 +134,17 @@ function AnalysisCard({ analysis }) {
             </div>
           </div>
         )) : (
-          <p className="text-gray-300 text-xs text-center py-8">분석 중...</p>
+          <div className="text-center py-8">
+            <p className="text-gray-300 text-xs mb-3">{loading ? '분석 생성 중...' : '분석이 비어 있습니다.'}</p>
+            {onRetry && !loading && (
+              <button
+                onClick={onRetry}
+                className="text-[#1428A0] text-xs font-semibold border border-[#C7CFEE] bg-[#EEF1FF] rounded-full px-4 py-1.5 hover:bg-[#dce3ff] transition-colors"
+              >
+                ↻ 분석 다시 생성
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>
@@ -158,11 +179,11 @@ export default function NewsPage() {
   const [email, setEmail] = useState('')
   const router = useRouter()
 
-  const fetchNews = useCallback(async (userEmail) => {
+  const fetchNews = useCallback(async (userEmail, force = false) => {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch(`/api/news?email=${encodeURIComponent(userEmail)}`)
+      const res = await fetch(`/api/news?email=${encodeURIComponent(userEmail)}${force ? '&refresh=1' : ''}`)
       if (!res.ok) throw new Error('failed')
       const data = await res.json()
       setSections(data.sections)
@@ -223,12 +244,14 @@ export default function NewsPage() {
         )}
 
         {sections && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {analysis && (
-              <div className="md:col-span-2">
-                <AnalysisCard analysis={analysis} />
-              </div>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            <div className="md:col-span-2">
+              <AnalysisCard
+                analysis={analysis}
+                onRetry={() => email && fetchNews(email, true)}
+                loading={loading}
+              />
+            </div>
             {sectionEntries.map(([name, data], idx) => (
               <SectionCard
                 key={name}
