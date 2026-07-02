@@ -114,7 +114,7 @@ async function handler(request) {
         idx += count
       }
 
-      const html = buildEmailHtml(translatedGrouped, today, globalAnalysis)
+      const html = buildEmailHtml(translatedGrouped, today, globalAnalysis, user.email)
       await sendEmail(user.email, `[ChipBird] ${today} 오늘의 ChipBird`, html)
       return { email: user.email, status: 'sent' }
     } catch (err) {
