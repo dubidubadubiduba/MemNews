@@ -94,7 +94,7 @@ function AnalysisCard({ analysis, onRetry, loading }) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col">
-      <div className="px-4 py-3 flex-shrink-0 flex items-center justify-between" style={{ backgroundColor: '#475569' }}>
+      <div className="px-4 py-3 flex-shrink-0 flex items-center justify-between" style={{ backgroundColor: '#0A1931' }}>
         <div className="flex items-center gap-2">
           <span style={{ color: '#FBBF24', fontSize: '18px', lineHeight: 1 }}>★</span>
           <span className="text-white font-bold text-lg tracking-wide uppercase">
