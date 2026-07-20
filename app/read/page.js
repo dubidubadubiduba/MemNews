@@ -1,6 +1,7 @@
 'use client'
 import { Suspense, useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 function ReadContent() {
   const params = useSearchParams()
@@ -21,7 +22,9 @@ function ReadContent() {
   return (
     <main className="min-h-screen bg-[#F4F4F4]">
       <div className="bg-[#1428A0] px-6 py-4 flex items-center justify-between">
-        <img src="/chipbird-logo-fixed.png" alt="ChipBird" className="h-9" />
+        <Link href="/news">
+          <img src="/chipbird-logo-fixed.png" alt="ChipBird" className="h-9 cursor-pointer" />
+        </Link>
         {url && (
           <a
             href={url}

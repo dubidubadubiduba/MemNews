@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { SECTIONS } from '@/lib/keywords'
 
 const MAX_KW = 25
@@ -67,7 +68,9 @@ export default function CustomizePage() {
   return (
     <main className="min-h-screen bg-[#F4F4F4] pb-24">
       <div className="bg-[#1428A0] px-6 py-5 text-center">
-        <img src="/chipbird-logo-fixed.png" alt="ChipBird" className="h-10 mx-auto" />
+        <Link href="/news">
+          <img src="/chipbird-logo-fixed.png" alt="ChipBird" className="h-10 mx-auto cursor-pointer" />
+        </Link>
         <p className="text-[#a0b4e8] text-xs mt-1">관심 키워드를 선택하세요 (최대 {MAX_KW}개)</p>
       </div>
 
