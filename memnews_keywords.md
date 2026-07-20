@@ -1,6 +1,6 @@
-# ChipBird 키워드 체계 (섹션 4 + The Signal · 상위 62 · 하위 667)
+# ChipBird 키워드 체계 (섹션 4 + The Signal · 상위 63 · 하위 678)
 
-*업데이트: 2026-06-29 · lib/keywords.js(SECTIONS) 기준 자동 생성*
+*업데이트: 2026-07-20 · lib/keywords.js(SECTIONS) 기준 자동 생성*
 
 설정에서 선택 대상: **섹션 1~4** (최대 25개 · 각 섹션 최소 1개).
 맨 위 **The Signal — Memory Impact**(당사 Mem. 영향 분석)는 자동 생성(선택 불가).
@@ -9,7 +9,7 @@
 
 ---
 
-## Section 1 — 제품/기술 (13)
+## Section 1 — 제품/기술 (14)
 
 ### DDR
 `DDR`, `DDR5`, `DDR4`, `RDIMM`, `MRDIMM`, `SODIMM`, `UDIMM`, `server DRAM`, `DDR5 price`, `DDR5 1c nm`, `DDR5 high speed`
@@ -31,6 +31,9 @@
 
 ### CXL Memory
 `CXL memory`, `CXL memory module CMM`, `CXL memory expander`, `CXL memory pooling`, `CXL 3.0`, `CXL memory tiering`, `Samsung CMM CXL`, `CXL data center memory`, `CXL switch`, `CXL controller`, `CXL adoption server`
+
+### NAND
+`NAND`, `NAND flash`, `3D NAND`, `V-NAND`, `QLC NAND`, `NAND wafer`, `NAND price`, `NAND flash shortage`, `NAND capacity expansion`, `enterprise NAND`, `NAND contract price`
 
 ### UFS
 `UFS`, `UFS 4.1`, `UFS 4.0`, `UFS 5.0`, `mobile storage`, `smartphone NAND storage`, `UFS card`, `on-device AI storage`, `UFS sequential speed`, `automotive UFS`, `UFS adoption flagship`

@@ -38,7 +38,7 @@
 | 위치 | 이름 | 상위 키워드 | 비고 |
 |------|------|------------|------|
 | 맨 위(풀폭) | **The Signal — Memory Impact** | — | 당사 Mem. 영향 분석. 전체 뉴스 기반 자동 분석, 항상 표시 |
-| Section 1 | **제품/기술** | 13 (DDR, LPDDR, GDDR, SOCAMM, LPCAMM, HBM, CXL Memory, UFS, eMMC, SSD, ePOP, PIM, **CoWoS**) | |
+| Section 1 | **제품/기술** | 14 (DDR, LPDDR, GDDR, SOCAMM, LPCAMM, HBM, CXL Memory, **NAND**, UFS, eMMC, SSD, ePOP, PIM, CoWoS) | |
 | Section 2 | **응용** | 13 (Mobile, SVR, HBM, Consumer, **SOC**, **CPU/AP**, **AI·데이터센터**, **Foundry**, **Automotive**, eStorage, SSD, PC, Graphic) | |
 | Section 3 | **고객** | 27 (Apple, Xiaomi, **OPPO**, **vivo**, Google, NVIDIA, AMD, Tesla, Hyundai, BYD … ) | |
 | Section 4 | **Ref.** | 9 (SK Hynix, Micron, CXMT, YMTC, JHICC, Nanya, Kioxia, SanDisk, Solidigm) | 경쟁사 모니터링 |
