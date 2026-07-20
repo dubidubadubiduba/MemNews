@@ -43,7 +43,7 @@
 | Section 3 | **고객** | 27 (Apple, Xiaomi, **OPPO**, **vivo**, Google, NVIDIA, AMD, Tesla, Hyundai, BYD … ) | |
 | Section 4 | **Ref.** | 9 (SK Hynix, Micron, CXMT, YMTC, JHICC, Nanya, Kioxia, SanDisk, Solidigm) | 경쟁사 모니터링 |
 
-- 설정 화면에서 **최대 20개** 키워드 선택. **각 섹션 최소 1개** 선택해야 저장 가능(빠진 섹션 경고).
+- 설정 화면에서 **최대 25개** 키워드 선택. **각 섹션 최소 1개** 선택해야 저장 가능(빠진 섹션 경고).
 - 섹션당 최대 10개 기사, 키워드당 최대 1개. 박스 높이 **450px 고정**(섹션 1~4).
 - **이전 대비 변경**: `산업` 섹션 제거, 산업의 SOC/AI·데이터센터/Foundry/Automotive를 응용으로 이동, 응용의 Auto 삭제, 제품→제품/기술 개명 + CoWoS 추가, 고객에 OPPO/vivo 추가.
 
@@ -125,7 +125,7 @@ https://memorynews-chipbird.vercel.app/api/send-newsletter?test=send-test-9f3a&t
 app/
   page.js                    # 비밀번호 입력 (asdf)
   register/page.js           # 이메일 등록
-  customize/page.js          # 키워드 선택 (최대 20 · 섹션별 최소 1 검증)
+  customize/page.js          # 키워드 선택 (최대 25 · 섹션별 최소 1 검증)
   news/page.js               # 뉴스 피드 (The Signal 풀폭 + 섹션 1~4, 키워드 배지, 번역 전문)
   read/page.js               # 기사 전문 번역 보기 페이지 (이메일 '전문보기' 대상)
   layout.js                  # 메타데이터(title: Chipbird, OG 이미지)
