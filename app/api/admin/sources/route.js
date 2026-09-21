@@ -4,10 +4,11 @@ import { fetchNewsForKeywords } from '@/lib/rss'
 export const maxDuration = 60
 
 // 중복 제거된 뉴스 풀에서 직접소스 vs Google News 비중 진단
-// GET /api/admin/sources?secret=chipbird-test
+// GET /api/admin/sources?secret=<CRON_SECRET>
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
-  if (searchParams.get('secret') !== 'chipbird-test') {
+  const secret = searchParams.get('secret')
+  if (!process.env.CRON_SECRET || secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 

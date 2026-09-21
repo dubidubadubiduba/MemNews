@@ -42,13 +42,13 @@ async function handler(request) {
   const authHeader = request.headers.get('authorization')
   const userAgent = request.headers.get('user-agent') || ''
   const { searchParams } = new URL(request.url)
-  const testKey = searchParams.get('test') // 테스트 키
+  const testKey = searchParams.get('test') // 테스트 키(= CRON_SECRET)
   const testTo = searchParams.get('to')     // 테스트 수신자(1명만)
-  const isTest = testKey === 'send-test-9f3a' && !!testTo
+  const isTest = !!process.env.CRON_SECRET && testKey === process.env.CRON_SECRET && !!testTo
 
-  // 발송 리포트 조회(디버그): ?report=send-test-9f3a[&date=YYYY-MM-DD]
+  // 발송 리포트 조회(디버그): ?report=<CRON_SECRET>[&date=YYYY-MM-DD]
   const reportToken = searchParams.get('report')
-  if (reportToken === 'send-test-9f3a') {
+  if (process.env.CRON_SECRET && reportToken === process.env.CRON_SECRET) {
     const date = searchParams.get('date') ||
       new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })
     const rep = await kv.get(`newsletter-report:${date}`).catch(() => null)
@@ -66,11 +66,11 @@ async function handler(request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  // 일요일(KST)은 발송 안 함 + 하루 1회만 발송(중복 방지)
+  // 주말(토·일, KST)은 발송 안 함 + 하루 1회만 발송(중복 방지)
   if (!isTest) {
     const kstWeekday = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Seoul', weekday: 'short' })
-    if (kstWeekday === 'Sun') {
-      return NextResponse.json({ skipped: true, reason: '일요일은 발송하지 않음' })
+    if (kstWeekday === 'Sun' || kstWeekday === 'Sat') {
+      return NextResponse.json({ skipped: true, reason: '주말(토·일)은 발송하지 않음' })
     }
     const kstDate = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })
     const lock = await kv.set(`newsletter-sent:${kstDate}`, Date.now(), { nx: true, ex: 23 * 3600 })
@@ -132,7 +132,7 @@ async function handler(request) {
     results,
   }
 
-  // 발송 리포트 저장(7일) → ?report=send-test-9f3a 로 조회
+  // 발송 리포트 저장(7일) → ?report=<CRON_SECRET> 로 조회
   if (!isTest) {
     const kstDate = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })
     await kv.set(`newsletter-report:${kstDate}`, report, { ex: 7 * 24 * 3600 }).catch(() => {})

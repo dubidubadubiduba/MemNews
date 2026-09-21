@@ -29,7 +29,7 @@ export async function GET(request) {
   const secret = searchParams.get('secret')
   const to = searchParams.get('to')
 
-  if (secret !== process.env.CRON_SECRET && secret !== 'chipbird-test') {
+  if (!process.env.CRON_SECRET || secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
   if (!to) {
