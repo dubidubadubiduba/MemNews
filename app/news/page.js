@@ -47,7 +47,7 @@ function ArticleCard({ article }) {
           </span>
         )}
         <a
-          href={article.link}
+          href={article.link?.includes('news.google.com') ? `/api/go?u=${encodeURIComponent(article.link)}` : article.link}
           target="_blank"
           rel="noopener noreferrer"
           className="text-[#1428A0] font-semibold text-sm leading-snug hover:underline"

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { kv } from '@vercel/kv'
+import { isGoogleNewsUrl, resolveGoogleUrlCached } from '@/lib/gnews'
 
 export const maxDuration = 60
 
@@ -11,21 +12,25 @@ export async function GET(request) {
   const url = searchParams.get('url')
   if (!url) return NextResponse.json({ error: 'url 없음' }, { status: 400 })
 
-  // Google News 출처는 링크 구조상 원문을 가져올 수 없음 → 캐시보다 먼저 처리(옛 캐시 무시)
-  const host = (() => { try { return new URL(url).hostname } catch { return '' } })()
-  if (host.includes('news.google.com')) {
-    return NextResponse.json({
-      error: '이 기사는 Google News 출처라 전문 자동번역이 안 돼요. (다른 출처 기사는 번역됩니다) 제목을 클릭하면 원문 기사로 이동해 확인할 수 있어요.',
-    })
+  // Google News 출처는 리다이렉트 링크 → 실제 원문 URL로 복원 후 그 본문을 가져옴
+  let fetchUrl = url
+  if (isGoogleNewsUrl(url)) {
+    const real = await resolveGoogleUrlCached(url)
+    if (!real) {
+      return NextResponse.json({
+        error: '이 기사의 원문 링크를 불러오지 못했어요. 제목을 클릭해 원문에서 확인해 주세요.',
+      })
+    }
+    fetchUrl = real
   }
 
-  const cacheKey = `full:${url}`
+  const cacheKey = `full:${fetchUrl}`
   const cached = await kv.get(cacheKey).catch(() => null)
   if (cached) return NextResponse.json(cached)
 
   let text = ''
   try {
-    const res = await fetch(url, {
+    const res = await fetch(fetchUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120',
         'Accept': 'text/html,application/xhtml+xml',
